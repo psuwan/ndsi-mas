@@ -1,0 +1,23 @@
+@font-face {
+    font-family: 'Prompt-Light';
+    src: url('fonts/Prompt-Light.eot');
+    src: url('fonts/Prompt-Light.eot?#iefix') format('embedded-opentype'),
+    url('fonts/Prompt-Light.svg#Prompt-Light') format('svg'),
+    url('fonts/Prompt-Light.ttf') format('truetype'),
+    url('fonts/Prompt-Light.woff') format('woff'),
+    url('fonts/Prompt-Light.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+html, body {
+    font-family: 'Prompt-Light';
+}
+
+.font-sm{
+    font-size: small;
+}
+
+.font-bd{
+    font-weight: bold;
+}
