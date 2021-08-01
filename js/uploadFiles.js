@@ -1,7 +1,12 @@
 // Upload files
 function uploadFiles(name2Up, dir2Up, fileRet) {
-    let splitName = name2Up.split('_');
-    let totalfiles = document.getElementById(splitName[1] + '_fileID').files.length;
+    console.log(name2Up);
+    console.log(dir2Up);
+    console.log(fileRet);
+
+    let totalfiles = document.getElementById("id4EvdFiles_" + name2Up).files.length;
+
+    console.log(totalfiles);
 
     if (totalfiles > 0) {
 
@@ -9,10 +14,10 @@ function uploadFiles(name2Up, dir2Up, fileRet) {
 
         // Read selected files
         for (let index = 0; index < totalfiles; index++) {
-            formData.append(splitName[1] + '_file[]', document.getElementById(splitName[1] + '_fileID').files[index]);
+            formData.append('evdFiles_' + name2Up + '[]', document.getElementById("id4EvdFiles_" + name2Up).files[index]);
         }
-        formData.append('fileRefNumber', splitName[0]);
-        formData.append('fileRefString', splitName[1]);
+        formData.append('fileRefNumber', name2Up);
+        // formData.append('fileRefString', splitName[1]);
         formData.append('folder2Upload', dir2Up);
 
         let xhttp = new XMLHttpRequest();

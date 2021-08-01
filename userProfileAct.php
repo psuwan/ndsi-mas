@@ -10,6 +10,8 @@ $dbConn = dbConnect();
 // Primary variables
 $varpost_processName = filter_input(INPUT_POST, 'processName');
 $milNumber = filter_input(INPUT_POST, 'milNum2Update');
+$varget_command = filter_input(INPUT_GET, 'command');
+$varget_milNumb = filter_input(INPUT_GET, 'milNumber');
 
 // Profile data
 $pfData = array(
@@ -29,15 +31,18 @@ $pfData = array(
 );
 
 $pfRank = $pfData['pfRank'];
+$pfSex = $pfData['pfSex'];
 
 $tmpNameFirst = explode(" ", $pfData['pfNameFirst']);
 if (count($tmpNameFirst) > 1)
-    $pfNameFirst = $tmpNameFirst[1];
+    if ($pfSex === '2')
+        $pfNameFirst = $tmpNameFirst[2];
+    else
+        $pfNameFirst = $tmpNameFirst[1];
 else
     $pfNameFirst = $tmpNameFirst[0];
 
 $pfNameLast = $pfData['pfNameLast'];
-$pfSex = $pfData['pfSex'];
 $pfASNow = $pfData['pfASNow'];
 $pfWorkOffice = $pfData['pfWorkOffice'];
 $pfWorkPosition = $pfData['pfWorkPosition'];
@@ -138,6 +143,16 @@ if (!empty($varpost_processName)) {
                 echo "<script>alert('อัพเดทข้อมูลแล้ว')</script>";
                 echo "<script>window.location.href='./userProfile.php';</script>";
             }
+            break;
+    }
+}
+
+if (!empty($varget_command)) {
+    switch ($varget_command) {
+        case 'want2Up';
+            updateDB('tbl_profiles', 'mil_number', $varget_milNumb, 2, 'pf_asnext', NULL, 2);
+            echo "<script>alert('แจ้งขอรับการประเมินแล้ว')</script>";
+            echo "<script>window.location.href='./userProfile.php';</script>";
             break;
     }
 }

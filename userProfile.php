@@ -103,7 +103,7 @@ if ($sqlres_milProfile) {
                     <div class="card-body">
                         <h6 class="card-subtitle mb-2 text-muted"><?= $milNumber; ?></h6>
                         <div class="row">
-                            <div class="col-6"><h5 class="card-title">ข้อมูลผู้ขอรับการประเมิน <?= $pfASNow; ?></h5>
+                            <div class="col-6"><h5 class="card-title">ข้อมูลผู้ขอรับการประเมิน</h5>
                             </div>
                             <!-- Toggle switch -->
                             <div class="col-6 custom-control custom-switch d-flex justify-content-end">
@@ -114,8 +114,16 @@ if ($sqlres_milProfile) {
                         </div>
 
                         <form action="./userProfileAct.php" method="post">
+                            <!-- Row #00 -->
+                            <div class="row" id="id4Row0">
+                                <div class="col-12">
+                                    <a href="./userProfileAct.php?command=want2Up&milNumber=<?=$milNumber;?>" class="btn btn-sm btn-outline-primary">ต้องการรับการประเมินวิทยฐานะ</a>
+                                </div>
+                            </div>
+                            <!-- Row #00 -->
+
                             <!-- Row #01 -->
-                            <div class="row" id="id4PersonDetail">
+                            <div class="row mt-3" id="id4PersonDetail">
                                 <div class="col-md-6">
                                     <label for="if4PfNameFirst">ชื่อ</label>
                                     <input type="text" name="nameFirst" id="if4PfNameFirst"
@@ -411,7 +419,7 @@ if ($sqlres_milProfile) {
                                                     <td><?= $sqlfet_listStudyData['school_major']; ?></td>
                                                     <td><?= $sqlfet_listStudyData['school_year']; ?></td>
                                                     <td>
-                                                        <a href="./temp.php?command=delStudyData&id2delete=<?= $sqlfet_listStudyData['id']; ?>"
+                                                        <a href="./userStudyAct.php?command=delStudyData&id2delete=<?= $sqlfet_listStudyData['id']; ?>"
                                                            onclick="return confirm('ต้องการลบข้อมูลนี้')"><i
                                                                     class="far fa-times-circle text-danger"></i></a>
                                                     </td>
@@ -428,8 +436,8 @@ if ($sqlres_milProfile) {
                         } else {
                             ?>
                             <div class="row mt-3">
-                                <div class="col-12 table-responsive text-warning">
-                                    <h4>ไม่มีข้อมูล</h4>
+                                <div class="col-12 table-responsive text-danger text-center">
+                                    <h5>ไม่มีข้อมูล</h5>
                                 </div>
                             </div>
                             <?
@@ -484,7 +492,7 @@ if ($sqlres_milProfile) {
                                                     <td><?= $sqlfet_listCourse['course_opener']; ?></td>
                                                     <td><?= $sqlfet_listCourse['course_year']; ?></td>
                                                     <td>
-                                                        <a href="./temp.php?command=delCourseData&id2delete=<?= $sqlfet_listCourse['id']; ?>"
+                                                        <a href="./userStudyAct.php?command=delCourseData&id2delete=<?= $sqlfet_listCourse['id']; ?>"
                                                            onclick="return confirm('ต้องการลบข้อมูลนี้')"><i
                                                                     class="far fa-times-circle text-danger"></i></a>
                                                     </td>
@@ -528,7 +536,7 @@ if ($sqlres_milProfile) {
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="./temp.php" method="post">
+            <form action="./userStudyAct.php" method="post">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-4">
@@ -589,7 +597,7 @@ if ($sqlres_milProfile) {
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="./temp.php" method="post">
+            <form action="./userStudyAct.php" method="post">
 
                 <div class="modal-body">
                     <div class="row mt-3">
@@ -669,6 +677,7 @@ if ($sqlres_milProfile) {
             $("#id4Row4Button").removeClass("d-none");
             $("#id4RowMisc1").removeClass("d-none");
             $("#id4EditRow3").removeClass("d-none");
+            // $("#id4Row0").removeClass("d-none");
 
             $("#id4Row2").addClass("d-none");
             $("#id4Row3").addClass("d-none");
@@ -682,6 +691,7 @@ if ($sqlres_milProfile) {
             $("#id4Row4Button").addClass("d-none");
             $("#id4RowMisc1").addClass("d-none");
             $("#id4EditRow3").addClass("d-none");
+            // $("#id4Row0").addClass("d-none");
 
             $("#id4Row2").removeClass("d-none");
             $("#id4Row3").removeClass("d-none");

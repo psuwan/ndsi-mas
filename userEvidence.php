@@ -7,6 +7,10 @@ $dateNow = date("Y-m-d");
 $timeNow = date("H:i:s");
 
 $milNumber = encrypt_decrypt($_SESSION['userLogin'], 'decrypt');
+$asNext = getValue('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_asnext');
+if (!empty($asNext)) {
+    header('location:./userMgrEvd.php?evd2Upload=' . $asNext);
+}
 
 ?>
 <!doctype html>
@@ -48,157 +52,28 @@ $milNumber = encrypt_decrypt($_SESSION['userLogin'], 'decrypt');
         <div class="row mt-3">
             <div class="col-md-8 offset-md-2 d-flex justify-content-center">
 
-                <div class="card shadow-lg" style="width: 100%;">
+                <div class="card shadow-lg pt-5 pb-5" style="width: 100%;">
                     <div class="card-body">
                         <h6 class="card-subtitle mb-2 text-muted"><?= $milNumber; ?></h6>
                         <div class="row">
-                            <div class="col-6"><h5 class="card-title">ข้อมูลเกี่ยวกับการปฏิบัติงานที่ขอรับการประเมิน</h5></div>
-                            <!-- Toggle switch -->
-                            <div class="col-6 custom-control custom-switch d-flex justify-content-end">
-                                <input type="checkbox" class="custom-control-input" id="customSwitch1">
-                                <label class="custom-control-label" for="customSwitch1">แก้ไขข้อมูล</label>
-                            </div><!-- Toggle switch -->
+                            <div class="col-12"><h5 class="card-title h4">ข้อมูลหลักฐานที่ใช้ประกอบการขอมี
+                                    หรือขอเลื่อนวิทยฐานะ</h5></div>
                         </div>
 
-                        <form action="./temp.php" method="post">
-                            <!-- Row #01 -->
-                            <div class="row" id="id4PersonDetail">
-                                <div class="col-md-6">
-                                    <label for="if4PfNameFirst">ชื่อ</label>
-                                    <input type="text" name="nameFirst" id="if4PfNameFirst"
-                                           class="form-control form-control-sm" disabled value="">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="if4PfNameFirst">สกุล</label>
-                                    <input type="text" name="nameLast" id="if4PfNameLast"
-                                           class="form-control form-control-sm" disabled value="">
-                                </div>
-                            </div><!-- Row #01 -->
-
-                            <!-- Row Misc #01 -->
-                            <div class="row mt-2 d-none" id="id4RowMisc1">
-                                <div class="col-md-3">
-                                    <div><label for="">เพศ</label></div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="sex" id="id4Sex1" value="1">
-                                        <label class="form-check-label" for="id4Sex1">ชาย</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="sex" id="id4Sex2" value="2">
-                                        <label class="form-check-label" for="id4Sex2">หญิง</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="id4Rank">ยศ</label>
-                                    <select name="rank" id="id4Rank" class="form-control form-control-sm">
-                                        <option value="">เลือกยศ</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="id4DateBirth">เกิดวันที่</label>
-                                    <input type="text" name="dateBirth" id="id4DateBirth"
-                                           class="form-control form-control-sm">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="id4DateInGov">เกิดวันที่</label>
-                                    <input type="text" name="dateInGov" id="id4DateInGov"
-                                           class="form-control form-control-sm">
-                                </div>
-                            </div><!-- Row Misc #1 -->
-
-                            <!-- Row #02 -->
-                            <div class="row mt-3">
-                                <div class="col-md-3">
-                                    <label for="id4Age">อายุ</label>
-                                    <input type="text" name="age" id="id4Age" class="form-control form-control-sm"
-                                           placeholder="อายุ ปี เดือน" disabled value="">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="id4GovAge">อายุราชการ</label>
-                                    <input type="text" name="govAge" id="id4GovAge"
-                                           class="form-control form-control-sm" placeholder="อายุราชการ ปี เดือน"
-                                           disabled value="">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="id4Position">ตำแหน่ง</label>
-                                    <input type="text" name="position" id="id4Position"
-                                           class="form-control form-control-sm" placeholder="ตำแหน่งงาน" disabled
-                                           value="">
-                                </div>
-                            </div><!-- Row #02 -->
-
-                            <!-- Row #03 -->
-                            <div class="row mt-3">
-                                <div class="col-md-4">
-                                    <label for="id4WorkOffice">สถานศึกษา/หน่วยงาน</label>
-                                    <input type="text" name="workOffice" id="id4WorkOffice"
-                                           class="form-control form-control-sm" placeholder="สถานศึกษา/หน่วยงาน"
-                                           disabled value="">
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="id4ASNow">ปัจจุบันมีวิทยฐานะระดับ</label>
-                                    <input type="text" name="ASNow" id="id4ASNow" class="form-control form-control-sm"
-                                           placeholder="ระดับวิทยฐานะปัจจุบัน" disabled value="">
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="id4ASAge">ระยะเวลา</label>
-                                    <input type="text" name="ASAge" id="id4ASAge" class="form-control form-control-sm"
-                                           placeholder="ระยะเวลาวิทยฐานะ ปี เดือน" disabled value="">
-                                </div>
-                            </div><!-- Row #03 -->
-
-                            <!-- Row #03 for edit -->
-                            <div class="row mt-3">
-                                <div class="col-md-4">
-                                    <label for="id4WorkOffice">สถานศึกษา/หน่วยงาน</label>
-                                    <input type="text" name="workOffice" id="id4WorkOffice"
-                                           class="form-control form-control-sm" placeholder="สถานศึกษา/หน่วยงาน"
-                                           value="">
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="id4ASNow">ปัจจุบันมีวิทยฐานะระดับ</label>
-                                    <input type="text" name="ASNow" id="id4ASNow" class="form-control form-control-sm"
-                                           placeholder="ระดับวิทยฐานะปัจจุบัน" value="">
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="id4ASAge">ระยะเวลา</label>
-                                    <input type="text" name="ASAge" id="id4ASAge" class="form-control form-control-sm"
-                                           placeholder="ระยะเวลาวิทยฐานะ ปี เดือน" value="">
-                                </div>
-                            </div><!-- Row #03 for edit -->
-
-                            <!-- Row #04 -->
-                            <div class="row mt-3">
-                                <div class="col-md-4">
-                                    <label for="id4SalaryLevel">รับเงินเดือนระดับ</label>
-                                    <input type="text" name="salaryLevel" id="id4SalaryLevel"
-                                           class="form-control form-control-sm text-center" placeholder="ระดับเงินเดือน"
-                                           disabled value="">
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="id4SalaryFloor">ชั้น</label>
-                                    <input type="text" name="salaryFloor" id="id4SalaryFloor"
-                                           class="form-control form-control-sm text-center" placeholder="ชั้นเงินเดือน"
-                                           disabled value="">
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="id4Salary">จำนวนเงินเดือน</label>
-                                    <input type="text" name="salary" id="id4Salary"
-                                           class="form-control form-control-sm text-center" placeholder="จำนวนเงินเดือน"
-                                           disabled value="">
-                                </div>
+                        <div class="row mt-5">
+                            <div class="col-6 offset-3">
+                                <label class="h4" for="id4ASLevel">ต้องการเพิ่มข้อมูลสำหรับวิทยฐานะระดับ</label>
+                                <select class="form-control form-control-sm" name="" id="id4ASLevel" required
+                                        onchange="asLevelGo(this.value);">
+                                    <option value="">เลือกระดับวิทยฐานะ</option>
+                                    <option value="1">ครูชำนาญการต้น</option>
+                                    <option value="2">ครูชำนาญการ (ครูทหาร)</option>
+                                    <option value="3">ครูชำนาญการ (ครูวิชาการ)</option>
+                                    <option value="4">ครูชำนาญการพิเศษ</option>
+                                </select>
                             </div>
+                        </div>
 
-                            <div class="row mt-3 d-none" id="id4Row4Button">
-                                <div class="col-12 text-center">
-                                    <hr>
-                                    <button type="submit" class="btn btn-sm btn-outline-success" style="width: 150px;">
-                                        บันทึก
-                                    </button>
-                                </div>
-                            </div>
-
-                        </form>
 
                     </div>
                 </div>
@@ -206,41 +81,6 @@ $milNumber = encrypt_decrypt($_SESSION['userLogin'], 'decrypt');
             </div>
         </div>
 
-        <!-- Card #02 -->
-        <div class="row mt-5">
-            <div class="col-md-8 offset-md-2 d-flex justify-content-center">
-                <div class="card shadow-lg" style="width: 100%;">
-                    <div class="card-body">
-                        <h6 class="card-subtitle mb-2 text-muted"><?= $milNumber; ?></h6>
-                        <div class="row">
-                            <div class="col-6"><h5 class="card-title">ข้อมูลคุณวุฒิทางการศึกษา</h5></div>
-                            <!-- Toggle switch -->
-                            <div class="col-6 d-flex justify-content-end">
-                                <a href="#" class="btn btn-sm btn-outline-success">&nbsp;+&nbsp;</a>&nbsp;&nbsp;เพิ่มข้อมูล
-                            </div><!-- Toggle switch -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div><!-- Card #02 -->
-
-        <!-- Card #03 -->
-        <div class="row mt-5">
-            <div class="col-md-8 offset-md-2 d-flex justify-content-center">
-                <div class="card shadow-lg" style="width: 100%;">
-                    <div class="card-body">
-                        <h6 class="card-subtitle mb-2 text-muted"><?= $milNumber; ?></h6>
-                        <div class="row">
-                            <div class="col-6"><h5 class="card-title">ข้อมูลคุณวุฒิทางการศึกษาทหาร</h5></div>
-                            <!-- Toggle switch -->
-                            <div class="col-6 d-flex justify-content-end">
-                                <a href="#" class="btn btn-sm btn-outline-success">&nbsp;+&nbsp;</a>&nbsp;&nbsp;เพิ่มข้อมูล
-                            </div><!-- Toggle switch -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div><!-- Card #03 -->
     </div>
 
 </div>
@@ -270,19 +110,22 @@ $milNumber = encrypt_decrypt($_SESSION['userLogin'], 'decrypt');
 </script>
 
 <script>
-    $("#customSwitch1").on("change click", function () {
-        if ($("#customSwitch1").is(":checked")) {
-            $("#id4Row4Button").removeClass("d-none");
-            $("#id4RowMisc1").removeClass("d-none");
-            $("#if4PfNameFirst").attr("disabled", false);
-            $("#if4PfNameLast").attr("disabled", false);
-        } else {
-            $("#id4Row4Button").addClass("d-none");
-            $("#id4RowMisc1").addClass("d-none");
-            $("#if4PfNameFirst").attr("disabled", true);
-            $("#if4PfNameLast").attr("disabled", true);
+    let asLevelGo = function (asLevel) {
+        switch (asLevel) {
+            case '1':
+                window.location.href = 'userMgrEvd.php?evd2Upload=' + asLevel;
+                break;
+            case '2':
+                window.location.href = 'userMgrEvd.php?evd2Upload=' + asLevel;
+                break;
+            case '3':
+                window.location.href = 'userMgrEvd.php?evd2Upload=' + asLevel;
+                break;
+            case '4':
+                window.location.href = 'userMgrEvd.php?evd2Upload=' + asLevel;
+                break;
         }
-    });
+    }
 </script>
 
 </body>

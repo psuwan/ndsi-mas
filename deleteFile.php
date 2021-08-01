@@ -1,12 +1,13 @@
 <?php
+
 $varget_file2Delete = filter_input(INPUT_GET, 'file2Del');
 $varget_file2Return = filter_input(INPUT_GET, 'file2Ret');
 $varget_fileRef = filter_input(INPUT_GET, 'refNumber');
 
-$strSplit = explode('_', $varget_fileRef);
+//$strSplit = explode('_', $varget_fileRef);
 
-$ret2File = trim($varget_file2Return . "?courseRefNumber=" . $strSplit[0],DIRECTORY_SEPARATOR);
-
+$ret2File = trim($varget_file2Return, DIRECTORY_SEPARATOR);
+$ret2File .= "?evd2Upload=" . $varget_fileRef;
 
 if (file_exists($varget_file2Delete)) {
     unlink($varget_file2Delete);
