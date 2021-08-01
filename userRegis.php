@@ -122,7 +122,7 @@ $dbConn = dbConnect();
     // check mil-number existing
     // let milNumExisting = function (){
     $("#id4MilNumber").on("keyup change", function () {
-        if (milNumber.value.length < 13) {
+        if (milNumber.value.length < 10) {
             $("#id4Password").attr("disabled", true);
             $("#id4RePassword").attr("disabled", true);
         } else {

@@ -117,27 +117,62 @@ function chkFileExists($fileName, $fileFolder, $refNumber)
                             while ($sqlfet_listEvd = mysqli_fetch_assoc($sqlres_listEvd)) {
                                 // Start of while loop
                                 $evdName = $milNumber . 'mAS' . $varget_evd2Upload . 'evd' . str_pad(++$cntEvd, 2, '0', STR_PAD_LEFT);
+                                $evdChkResult = getValue('mas_evdchk', 'evd_refnumber', $evdName, 2, 'evd_chked');
                                 ?>
                                 <div class="row mt-3">
-                                    <div class="col-md-12"><?= $cntEvd . ". "; ?><?= $sqlfet_listEvd['evd_name']; ?></div>
+                                    <div class="col-md-12">
+                                        <?= $cntEvd . ". "; ?>
+                                        <?php
+                                        if ($evdChkResult === '1') {
+                                            ?>
+                                            <span class="badge badge-pill badge-danger"><i class="fas fa-star"></i></span>
+                                            <?php
+                                        }
+                                        ?>
+                                        <?= $sqlfet_listEvd['evd_name']; ?></div>
                                 </div>
                                 <div class="row mt-3">
-                                    <div class="col-md-2 text-md-right">ไฟล์หลักฐาน :</div>
-                                    <div class="col-md-10" id="chkFile_<?= $evdName; ?>">
-                                        <?= chkFileExists($evdName, 'filesEvd', $varget_evd2Upload); ?>
+
+                                    <div class="col-6">
+
+                                        <div class="row">
+                                            <div class="col-md-2 text-md-right">ไฟล์หลักฐาน :</div>
+                                            <div class="col-md-10" id="chkFile_<?= $evdName; ?>">
+                                                <?= chkFileExists($evdName, 'filesEvd', $varget_evd2Upload); ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <?php
+                                                // Check result start
+                                                if ($evdChkResult !== '2') {
+                                                    ?>
+                                                    <div class="col-10 offset-2">
+                                                        <label class="btn btn-outline-info btn-sm mt-2"
+                                                               id="id4BtnEvd_<?= $evdName; ?>"
+                                                               style="width:65px;">ไฟล์<input
+                                                                    type="file" multiple
+                                                                    style="display:none;"
+                                                                    name="evdFiles_<?= $evdName; ?>"
+                                                                    id="id4EvdFiles_<?= $evdName; ?>"
+                                                                    onchange="updFile2Upload('<?= $evdName; ?>', 'filesEvd', 'userMgrEvd.php?evd2Upload=<?= $varget_evd2Upload; ?>');">
+                                                        </label><span id="span4Evd_<?= $evdName; ?>"></span>
+                                                    </div>
+                                                    <?php
+                                                }
+                                                // Check result stop
+                                                ?>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row mt-0">
-                                    <div class="col-2">&nbsp;</div>
-                                    <div class="col-10">
-                                        <label class="btn btn-outline-info btn-sm mt-2" id="id4BtnEvd_<?= $evdName; ?>"
-                                               style="width:65px;">ไฟล์<input
-                                                    type="file" multiple
-                                                    style="display:none;"
-                                                    name="evdFiles_<?= $evdName; ?>" id="id4EvdFiles_<?= $evdName; ?>"
-                                                    onchange="updFile2Upload('<?= $evdName; ?>', 'filesEvd', 'userMgrEvd.php?evd2Upload=<?= $varget_evd2Upload; ?>');">
-                                        </label><span id="span4Evd_<?= $evdName; ?>"></span>
+
+                                    <div class="col-6">
+                                        <textarea class="form-control form-control-sm"
+                                                  name="" id=""
+                                                  rows="3"><?= getValue('mas_evdchk', 'evd_refnumber', $evdName, 2, 'evd_comment'); ?></textarea>
                                     </div>
+
                                 </div>
                                 <?php
                                 // End of while loop

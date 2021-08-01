@@ -63,6 +63,7 @@ $milNumber = encrypt_decrypt($_SESSION['userLogin'], 'decrypt');
                                         <th>ชื่อ-สกุล</th>
                                         <th>วิทยฐานะปัจจุบัน</th>
                                         <th></th>
+                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -75,7 +76,19 @@ $milNumber = encrypt_decrypt($_SESSION['userLogin'], 'decrypt');
                                             <tr>
                                                 <td><?= $sqlfet_listMasRequest['mil_number']; ?></td>
                                                 <td><?= $sqlfet_listMasRequest['pf_namefirst'] . " " . $sqlfet_listMasRequest['pf_namelast']; ?></td>
-                                                <td><?= $sqlfet_listMasRequest['pf_asnow']; ?></td>
+                                                <td><?= getValue('mas_as', 'as_number', $sqlfet_listMasRequest['pf_asnow'], 1, 'as_name'); ?></td>
+                                                <td>
+                                                    <?php
+                                                    $userASNext = getValue('tbl_profiles','mil_number', $sqlfet_listMasRequest['mil_number'], 2,'pf_asnext');
+                                                    $criteria2SChk = $sqlfet_listMasRequest['mil_number']."mAS".$userASNext;
+                                                    $newEvdCmd = "SELECT COUNT(evd_newup) AS newevd FROM mas_evdchk WHERE evd_newup=1 AND evd_refnumber LIKE '" . $criteria2SChk . "%'";
+                                                    $newEvdRes = mysqli_query($dbConn, $newEvdCmd);
+                                                    if ($newEvdRes) {
+                                                        $newEvdFet = mysqli_fetch_assoc($newEvdRes);
+                                                    }
+                                                    ?>
+                                                    <span class="badge badge-pill badge-warning">ข้อมูลใหม่: <?= $newEvdFet['newevd']; ?></span>
+                                                </td>
                                                 <td>
                                                     <select name="" id="id4MasAct" class="form-control form-control-sm"
                                                             onchange="courseOperation(this.value);">

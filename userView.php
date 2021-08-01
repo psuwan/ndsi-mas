@@ -82,9 +82,13 @@ if (empty($varget_level2Edit)) {
                                             <td>
                                                 <?php
                                                 if ($sqlfet_listUser['user_status'] === '0') {
-                                                    echo "<i class=\"fas fa-power-off text-warning\"></i>";
+                                                    ?>
+                                                    <a href="userEnable.php?milNum2En=<?=$sqlfet_listUser['mil_number'];?>"><i class="fas fa-power-off text-warning"></i></a>
+                                                        <?php
                                                 } else {
-                                                    echo "<i class=\"fas fa-power-off text-success\"></i>";
+                                                    ?>
+                                                    <a href="userEnable.php?milNum2En=<?=$sqlfet_listUser['mil_number'];?>"><i class="fas fa-power-off text-success"></i></a>
+                                                    <?php
                                                 }
                                                 echo "&nbsp;";
                                                 if ($sqlfet_listUser['user_level'] !== '9') {

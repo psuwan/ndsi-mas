@@ -39,8 +39,8 @@ function chkFileExists($fileName, $fileFolder, $refNumber)
                 $tmpGenID4DelIcon = explode(".", str_replace($baseDir . $fileFolder . DIRECTORY_SEPARATOR, '', $files2[$iFiles2]));
                 $genID4DelIcon = $tmpGenID4DelIcon[0];
                 ?>
-                <!--<a id="id4DelFile_<?/*= $genID4DelIcon; */?>"
-                   href="./deleteFile.php?file2Del=<?/*= $files2[$iFiles2]; */?>&file2Ret=<?/*= $_SERVER['SCRIPT_NAME']; */?>&refNumber=<?/*= $refNumber; */?>"><i
+                <!--<a id="id4DelFile_<?/*= $genID4DelIcon; */ ?>"
+                   href="./deleteFile.php?file2Del=<?/*= $files2[$iFiles2]; */ ?>&file2Ret=<?/*= $_SERVER['SCRIPT_NAME']; */ ?>&refNumber=<?/*= $refNumber; */ ?>"><i
                             class="far fa-times-circle text-danger"></i></a>-->
                 <a href="<?= str_replace($baseDir, '', $folder2Scan) . str_replace($folder2Scan, '', $files2[$iFiles2]); ?>"
                    target="_blank"><span class="badge badge-pill badge-primary"> ไฟล์ที่ <?= $iFiles2 + 1; ?> </a>
@@ -122,26 +122,50 @@ function chkFileExists($fileName, $fileFolder, $refNumber)
                                 $evdName = $masMilNumber . 'mAS' . $userASNext . 'evd' . str_pad(++$cntEvd, 2, '0', STR_PAD_LEFT);
                                 ?>
                                 <div class="row mt-3">
-                                    <div class="col-md-12"><?= $cntEvd . ". "; ?><?= $sqlfet_listEvd['evd_name']; ?></div>
+                                    <div class="col-md-6"><?= $cntEvd . ". "; ?><?= $sqlfet_listEvd['evd_name']; ?></div>
+                                    <?php
+                                    if ($cntEvd === 1) {
+                                        ?>
+                                        <div class="col-md-6">ความเห็นของ กวท.</div>
+                                        <?php
+                                    }
+                                    ?>
                                 </div>
-                                <div class="row mt-3">
-                                    <div class="col-md-2 text-md-right">ไฟล์หลักฐาน :</div>
-                                    <div class="col-md-10" id="chkFile_<?= $evdName; ?>">
-                                        <?= chkFileExists($evdName, 'filesEvd', $varget_evd2Upload); ?>
+
+                                <!-- Start of Form -->
+                                <form action="./temp1.php" method="post">
+                                    <div class="row mt-3">
+                                        <div class="col-md-2 text-md-right">ไฟล์หลักฐาน :</div>
+                                        <div class="col-md-4" id="chkFile_<?= $evdName; ?>">
+                                            <?= chkFileExists($evdName, 'filesEvd', $userASNext); ?>
+                                        </div>
+                                        <div class="col-md-6" id="id4MasComment">
+                                        <textarea class="form-control form-control-sm"
+                                                  name="masComment" id=""
+                                                  rows="3"><?= getValue('mas_evdchk', 'evd_refnumber', $evdName, 2, 'evd_comment'); ?></textarea>
+                                        </div>
                                     </div>
-                                </div>
-                                <!--<div class="row mt-0">
-                                    <div class="col-2">&nbsp;</div>
-                                    <div class="col-10">
-                                        <label class="btn btn-outline-info btn-sm mt-2" id="id4BtnEvd_<?/*= $evdName; */?>"
-                                               style="width:65px;">ไฟล์<input
-                                                    type="file" multiple
-                                                    style="display:none;"
-                                                    name="evdFiles_<?/*= $evdName; */?>" id="id4EvdFiles_<?/*= $evdName; */?>"
-                                                    onchange="updFile2Upload('<?/*= $evdName; */?>', 'filesEvd', 'userMgrEvd.php?evd2Upload=<?/*= $varget_evd2Upload; */?>');">
-                                        </label><span id="span4Evd_<?/*= $evdName; */?>"></span>
+                                    <div class="row mt-1">
+                                        <div class="col-md-3 offset-md-6">
+                                            <select name="masEvdChkResult" id="id4SelOpt_<?= $evdName; ?>"
+                                                    class="form-control form-control-sm"
+                                                    onchange="selOptChang(this.value, '<?= $evdName; ?>')">
+                                                <option value="0">ตัวเลือก</option>
+                                                <option value="1">หลักฐานถูกต้อง</option>
+                                                <option value="2">หลักฐานต้องแก้ไข/ต้องการเพิ่ม</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <button type="submit" class="btn btn-sm btn-primary"
+                                                    id="id4BtnSubmit_<?= $evdName; ?>" disabled>
+                                                บันทึก
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>-->
+                                    <input type="hidden" name="processName" value="masChkEvd">
+                                    <input type="hidden" name="refNumber" value="<?= $evdName; ?>">
+                                </form><!-- End of Form -->
+
                                 <?php
                                 // End of while loop
                             }
@@ -209,6 +233,23 @@ function chkFileExists($fileName, $fileFolder, $refNumber)
 <!--<script>-->
 <!--    $("#id4DelFile_7412589630147mAS4evd05_0").addClass("d-none");-->
 <!--</script>-->
+
+<script>
+    let updateMasComment = function (textComment, evdRefNumber) {
+        console.log('textComment: ' + textComment);
+        console.log('evdRefNumber: ' + evdRefNumber);
+    }
+</script>
+
+<script>
+    let selOptChang = function (optVal, refNumber) {
+        if (optVal === '0') {
+            $("#id4BtnSubmit_" + refNumber).attr("disabled", true);
+        } else {
+            $("#id4BtnSubmit_" + refNumber).attr("disabled", false);
+        }
+    }
+</script>
 
 </body>
 </html>
