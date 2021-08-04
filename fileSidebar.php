@@ -39,9 +39,12 @@
                     <li>
                         <a href="./userProfile.php">ข้อมูลผู้ขอรับการประเมิน</a>
                     </li>
-                    <!--                    <li>-->
-                    <!--                        <a href="#">ข้อมูลการรับราชการ</a>-->
-                    <!--                    </li>-->
+                    <li>
+                        <a href="./userWorkReport.php">รายงานเกี่ยวการปฏิบัติงาน</a>
+                    </li>
+                    <li>
+                        <a href="./userWork3Section.php">รายงาน 3 ด้าน</a>
+                    </li>
                     <li>
                         <a href="./userEvidence.php">ข้อมูลเกี่ยวกับการปฏิบัติงานที่ขอรับการประเมิน</a>
                     </li>

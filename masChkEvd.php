@@ -79,8 +79,8 @@ $milNumber = encrypt_decrypt($_SESSION['userLogin'], 'decrypt');
                                                 <td><?= getValue('mas_as', 'as_number', $sqlfet_listMasRequest['pf_asnow'], 1, 'as_name'); ?></td>
                                                 <td>
                                                     <?php
-                                                    $userASNext = getValue('tbl_profiles','mil_number', $sqlfet_listMasRequest['mil_number'], 2,'pf_asnext');
-                                                    $criteria2SChk = $sqlfet_listMasRequest['mil_number']."mAS".$userASNext;
+                                                    $userASNext = getValue('tbl_profiles', 'mil_number', $sqlfet_listMasRequest['mil_number'], 2, 'pf_asnext');
+                                                    $criteria2SChk = $sqlfet_listMasRequest['mil_number'] . "mAS" . $userASNext;
                                                     $newEvdCmd = "SELECT COUNT(evd_newup) AS newevd FROM mas_evdchk WHERE evd_newup=1 AND evd_refnumber LIKE '" . $criteria2SChk . "%'";
                                                     $newEvdRes = mysqli_query($dbConn, $newEvdCmd);
                                                     if ($newEvdRes) {
@@ -93,12 +93,18 @@ $milNumber = encrypt_decrypt($_SESSION['userLogin'], 'decrypt');
                                                     <select name="" id="id4MasAct" class="form-control form-control-sm"
                                                             onchange="courseOperation(this.value);">
                                                         <option value="">ตัวเลือก</option>
-                                                        <option value="1_<?= $sqlfet_listMasRequest['mil_number']; ?>">
-                                                            ตรวจสอบหลักฐาน
-                                                        </option>
-                                                        <option value="2_<?= $sqlfet_listMasRequest['mil_number']; ?>">
-                                                            ดูประวัติ
-                                                        </option>
+                                                        <?php
+                                                        if ($newEvdFet['newevd'] !== '0') {
+                                                            ?>
+                                                            <option value="1_<?= $sqlfet_listMasRequest['mil_number']; ?>">
+                                                                ตรวจสอบหลักฐาน
+                                                            </option>
+                                                            <option value="2_<?= $sqlfet_listMasRequest['mil_number']; ?>">
+                                                                ดูประวัติ
+                                                            </option>
+                                                            <?php
+                                                        }
+                                                        ?>
                                                     </select>
                                                 </td>
                                             </tr>

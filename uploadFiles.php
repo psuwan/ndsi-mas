@@ -39,8 +39,10 @@ for ($i = 0; $i < $countfiles; $i++) {
     // Check extension
     if (in_array($file_extension, $valid_ext)) {
         // Change file name
+        $fileNameExtend = getToken(10);
         $temp = explode(".", $_FILES[$countType]['name'][$i]);
-        $newfilename = $upload_location . $varpost_fileRefNumber . "_" . $i . '.' . end($temp);
+//        $newfilename = $upload_location . $varpost_fileRefNumber . "_" . $i . '.' . end($temp);
+        $newfilename = $upload_location . $varpost_fileRefNumber . "_" . $fileNameExtend . '.' . end($temp);
         //psuwan's edited
         if (move_uploaded_file($_FILES[$countType]['tmp_name'][$i], $newfilename)) {
             // from Example

@@ -43,8 +43,8 @@ function insertDB($tblName, $colName, $colValue, $colType)
     if ($sqlres) {
         // Do nothing...
     } else {
-        echo "ERROR : " . mysqli_error($dbConnect);
         echo "<br>" . $sqlcmd . "<br>";
+        echo "ERROR : " . mysqli_error($dbConnect);
     }
 }
 
@@ -73,10 +73,10 @@ function updateDB($tblName, $refColumn, $refValue, $refType, $colName, $colValue
     if ($sqlres) {
         // Do nothing...
         // echo "<br><br><br><br><br><br>" . $sqlcmd . "<br>";
-        //echo $sqlcmd;
+        // echo $sqlcmd . "<br>";
     } else {
-        echo "ERROR : " . $colName . " | " . mysqli_error($dbConnect);
         echo "<br>" . $sqlcmd . "<br>";
+        echo "ERROR : " . $colName . " | " . mysqli_error($dbConnect);
     }
 }
 
@@ -93,8 +93,8 @@ function deleteDB($tblName, $refColumn, $refValue, $refType)
     if ($sqlres) {
         // Do nothing...
     } else {
-        echo "ERROR : " . mysqli_error($dbConnect);
         echo "<br>" . $sqlcmd . "<br>";
+        echo "ERROR : " . mysqli_error($dbConnect);
     }
 }
 
@@ -121,8 +121,8 @@ function countDB($tblName, $refColumn, $refValue, $refType)
         $sqlfet = mysqli_fetch_assoc($sqlres);
         return $sqlfet['cntDB'];
     } else {
+        echo "<br>" . $sqlcmd . "<br>";
         echo "ERROR : " . mysqli_error($dbConnect);
-        //echo "<br>" . $sqlcmd . "<br>";
     }
 }
 
@@ -156,8 +156,8 @@ function getValue($tblName, $refColumn, $refValue, $refType, $colName)
         $sqlfet = mysqli_fetch_assoc($sqlres);
         return $sqlfet[$colName];
     } else {
-        return "ERROR : " . mysqli_error($dbConnect);
-        return "<br>" . $sqlcmd . "<br>";
+        echo "<br>" . $sqlcmd . "<br>";
+        echo "ERROR : " . mysqli_error($dbConnect);
     }
 }
 
@@ -217,7 +217,17 @@ function monthThai($dateBE)
         array('ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'),
         $mm
     );
-    return $dd . " " . $mm . " " . $yy;
+    return number_format($dd) . " " . $mm . " " . $yy;
+}
+
+function numCharThai($numChar)
+{
+    $numCharThai = str_replace(
+        array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'),
+        array('๐', '๑', '๒', '๓', '๔', '๕', '๖', '๗', '๘', '๙'),
+        $numChar
+    );
+    return $numCharThai;
 }
 
 function confParam($confFolder, $confFile, $retParam)
@@ -237,15 +247,16 @@ function confParam($confFolder, $confFile, $retParam)
 }
 
 // Generate token
-function getToken($length){
+function getToken($length)
+{
     $token = "";
     $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    $codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
-    $codeAlphabet.= "0123456789";
+    $codeAlphabet .= "abcdefghijklmnopqrstuvwxyz";
+    $codeAlphabet .= "0123456789";
     $max = strlen($codeAlphabet); // edited
 
-    for ($i=0; $i < $length; $i++) {
-        $token .= $codeAlphabet[rand(0, $max-1)];
+    for ($i = 0; $i < $length; $i++) {
+        $token .= $codeAlphabet[rand(0, $max - 1)];
     }
 
     return $token;

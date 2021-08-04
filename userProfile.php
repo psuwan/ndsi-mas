@@ -4,17 +4,23 @@ include_once './lib/apksFunctions.php';
 $dbConn = dbConnect();
 
 date_default_timezone_set('Asia/Bangkok');
-$dateNow = date("Y-m-d");
-$timeNow = date("H:i:s");
+$dateIsNow = date("Y-m-d");
+$timeIsNow = date("H:i:s");
 
 $milNumber = encrypt_decrypt($_SESSION['userLogin'], 'decrypt');
+$dateNow = substr(getValue('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_dateasnext'), 0, 11);
+
+if (empty($dateNow) || ($dateNow == '1900-01-01')) {
+    $dateNow = $dateIsNow;
+}
 
 // Get profile for milNumber
+// Define variables
 $sqlcmd_milProfile = "SELECT * FROM tbl_profiles WHERE mil_number='" . $milNumber . "'";
 $sqlres_milProfile = mysqli_query($dbConn, $sqlcmd_milProfile);
 if ($sqlres_milProfile) {
     $sqlnum_milProfile = mysqli_num_rows($sqlres_milProfile);
-    if ($sqlnum_milProfile != 0) {
+    if ($sqlnum_milProfile !== 0) {
         $sqlfet_milProfile = mysqli_fetch_assoc($sqlres_milProfile);
 
         $pfNameFirst = $sqlfet_milProfile['pf_namefirst'];
@@ -58,7 +64,6 @@ if ($sqlres_milProfile) {
 } else {
     echo "ERROR!! [" . mysqli_errno($dbConn) . "]--[" . mysqli_error($dbConn) . "]";
 }
-
 ?>
 <!doctype html>
 <html lang="en">
@@ -96,9 +101,12 @@ if ($sqlres_milProfile) {
         <?php
         include_once './fileNavbar.php';
         ?>
+
+        <!-- Box#01 -->
         <div class="row mt-3">
             <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2 d-flex justify-content-center">
 
+                <!-- Card#01 -->
                 <div class="card shadow-lg" style="width: 100%;">
                     <div class="card-body">
                         <h6 class="card-subtitle mb-2 text-muted"><?= $milNumber; ?></h6>
@@ -112,15 +120,7 @@ if ($sqlres_milProfile) {
                                        data-placement="right" title="แก้ไขข้อมูล"></label>
                             </div><!-- Toggle switch -->
                         </div>
-
                         <form action="./userProfileAct.php" method="post">
-                            <!-- Row #00 -->
-                            <div class="row" id="id4Row0">
-                                <div class="col-12">
-                                    <a href="./userProfileAct.php?command=want2Up&milNumber=<?=$milNumber;?>" class="btn btn-sm btn-outline-primary">ต้องการรับการประเมินวิทยฐานะ</a>
-                                </div>
-                            </div>
-                            <!-- Row #00 -->
 
                             <!-- Row #01 -->
                             <div class="row mt-3" id="id4PersonDetail">
@@ -129,22 +129,23 @@ if ($sqlres_milProfile) {
                                     <input type="text" name="nameFirst" id="if4PfNameFirst"
                                            class="form-control form-control-sm" disabled value="<?php
                                     $rank4MilNumber = getValue('rtarf_ranks', 'rank_code', $pfRank, 2, 'rank_abbrv');
-                                    if ($pfSex == '2')
+                                    if ($pfSex === '2')
                                         $rank4MilNumber .= " หญิง";
-                                    echo $rank4MilNumber . " " . $pfNameFirst;
-                                    $tmpRank = substr($pfRank, 2, 3);
-                                    if ((intval($tmpRank) > 203) && (intval($tmpRank) < 210))
-                                        echo " ร.น.";
-                                    ?>">
+                                    echo $rank4MilNumber . " " . $pfNameFirst; ?>" autofocus>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="if4PfNameLast">สกุล</label>
                                     <input type="text" name="nameLast" id="if4PfNameLast"
-                                           class="form-control form-control-sm" disabled value="<?= $pfNameLast; ?>">
+                                           class="form-control form-control-sm" disabled value="<?php
+                                    echo $pfNameLast;
+                                    if ((substr($pfRank, 2, 3) < 210) && (substr($pfRank, 2, 3) > 203)) {
+                                        echo " ร.น.";
+                                    }
+                                    ?>">
                                 </div>
                             </div><!-- Row #01 -->
 
-                            <!-- Row Misc #01 -->
+                            <!-- Edit Row #01 -->
                             <div class="row mt-2 d-none" id="id4RowMisc1">
                                 <div class="col-md-3">
                                     <div>เพศ</div>
@@ -199,13 +200,16 @@ if ($sqlres_milProfile) {
                                     <input type="text" name="age" id="id4Age" class="form-control form-control-sm"
                                            placeholder="<?php
                                            if (!empty($pfDateBirth)) {
-                                               list($yy, $mm, $dd) = explode(",", dateDiff($pfDateBirth, dateBE($dateNow)));
-                                               if ($yy != 0)
-                                                   echo $yy . " ปี ";
-                                               if ($mm != 0)
-                                                   echo $mm . " เดือน ";
-                                               if ($dd != 0)
-                                                   echo $dd . " วัน";
+                                               list($yy, $mm, $dd) = explode(",", dateDiff($pfDateBirth, dateBE($dateIsNow)));
+                                               if ($yy < 120) {
+                                                   if ($yy != 0)
+                                                       echo $yy . " ปี ";
+                                                   if ($mm != 0)
+                                                       echo $mm . " เดือน ";
+                                                   if ($dd != 0)
+                                                       echo $dd . " วัน";
+                                               } else
+                                                   echo "ข้อมูลผิดพลาด";
                                            } else
                                                echo "อายุ ปี เดือน วัน";
                                            ?>" disabled value="">
@@ -216,16 +220,18 @@ if ($sqlres_milProfile) {
                                            class="form-control form-control-sm" placeholder="<?php
                                     if (!empty($pfDateInGov)) {
                                         list($yy, $mm, $dd) = explode(",", dateDiff($pfDateInGov, dateBE($dateNow)));
-                                        if ($yy != 0)
-                                            echo $yy . " ปี ";
-                                        if ($mm != 0)
-                                            echo $mm . " เดือน ";
-                                        if ($dd != 0)
-                                            echo $dd . " วัน";
+                                        if ($yy < 60) {
+                                            if ($yy != 0)
+                                                echo $yy . " ปี ";
+                                            if ($mm != 0)
+                                                echo $mm . " เดือน ";
+                                            if ($dd != 0)
+                                                echo $dd . " วัน";
+                                        } else
+                                            echo "ข้อมูลผิดพลาด";
                                     } else
                                         echo "อายุ ปี เดือน วัน";
-                                    ?>"
-                                           disabled value="">
+                                    ?>" disabled value="">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="id4Position">ตำแหน่ง</label>
@@ -244,8 +250,9 @@ if ($sqlres_milProfile) {
                                            disabled value="<?= $pfWorkOffice; ?>">
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="">ปัจจุบันมีวิทยฐานะระดับ</label>
-                                    <input type="text" name="" id="" class="form-control form-control-sm"
+                                    <label for="id4ASNowShow">ปัจจุบันมีวิทยฐานะระดับ</label>
+                                    <input type="text" name="ASNowShow" id="id4ASNowShow"
+                                           class="form-control form-control-sm"
                                            placeholder="ระดับวิทยฐานะปัจจุบัน" disabled value="<?php
                                     switch ($pfASNow) {
                                         case '0':
@@ -275,12 +282,15 @@ if ($sqlres_milProfile) {
                                            } else {
                                                if (!empty($pfDateInGov)) {
                                                    list($yy, $mm, $dd) = explode(",", dateDiff($pfDateASNow, dateBE($dateNow)));
-                                                   if ($yy != 0)
-                                                       echo $yy . " ปี ";
-                                                   if ($mm != 0)
-                                                       echo $mm . " เดือน ";
-                                                   if ($dd != 0)
-                                                       echo $dd . " วัน";
+                                                   if ($yy < 50) {
+                                                       if ($yy != 0)
+                                                           echo $yy . " ปี ";
+                                                       if ($mm != 0)
+                                                           echo $mm . " เดือน ";
+                                                       if ($dd != 0)
+                                                           echo $dd . " วัน";
+                                                   } else
+                                                       echo "ข้อมูลผิดพลาด";
                                                } else
                                                    echo "ระยะเวลา ปี เดือน วัน";
                                            }
@@ -326,7 +336,7 @@ if ($sqlres_milProfile) {
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <label for="id4DateAS">วันที่ได้รับวิทยฐานะ</label>
+                                    <label for="id4DateAS">วันที่ได้รับวิทยฐานะปัจจุบัน</label>
                                     <input type="text" name="dateAS" id="id4DateAS" class="form-control form-control-sm"
                                            placeholder="<?= $pfDateASNow; ?> คลิกเพื่อแก้ไข" value="">
                                 </div>
@@ -350,7 +360,7 @@ if ($sqlres_milProfile) {
                                     <label for="id4Salary">จำนวนเงินเดือน</label>
                                     <input type="text" name="salary" id="id4Salary"
                                            class="form-control form-control-sm text-center" placeholder="จำนวนเงินเดือน"
-                                           disabled value="<?= $pfSalary; ?>">
+                                           disabled value="<?= number_format($pfSalary, 2, '.', ','); ?> บาท">
                                 </div>
                             </div>
 
@@ -366,17 +376,19 @@ if ($sqlres_milProfile) {
                             <input type="hidden" name="processName" value="updateProfile">
                             <input type="hidden" name="milNum2Update" value="<?= $milNumber; ?>">
 
-                        </form>
+                        </form><!-- End of Card#01 Form -->
 
                     </div>
-                </div>
+                </div><!-- End of Card#01 -->
 
             </div>
-        </div>
+        </div><!-- End of Box#01 -->
 
-        <!-- Card #02 -->
+        <!-- Box#02 -->
         <div class="row mt-5">
             <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2 d-flex justify-content-center">
+
+                <!-- Card#02 -->
                 <div class="card shadow-lg" style="width: 100%;">
                     <div class="card-body">
                         <h6 class="card-subtitle mb-2 text-muted"><?= $milNumber; ?></h6>
@@ -397,18 +409,18 @@ if ($sqlres_milProfile) {
                             <div class="row mt-3">
                                 <div class="col-12 table-responsive">
                                     <table class="table table-striped">
+                                        <thead>
                                         <tr>
-                                            <thead>
                                             <th>สถาบันการศึกษา</th>
                                             <th>สาขา</th>
                                             <th>วิชาเอก</th>
                                             <th>ปีที่สำเร็จการศึกษา</th>
                                             <th></th>
-                                            </thead>
                                         </tr>
+                                        </thead>
                                         <tbody>
                                         <?php
-                                        $sqlcmd_listStudyData = "SELECT * FROM mas_userschool WHERE mil_number='" . $milNumber . "' ORDER BY school_level ASC, school_year ASC";
+                                        $sqlcmd_listStudyData = "SELECT * FROM mas_userschool WHERE mil_number='" . $milNumber . "' ORDER BY school_level, school_year";
                                         $sqlres_listStudyData = mysqli_query($dbConn, $sqlcmd_listStudyData);
                                         if ($sqlres_listStudyData) {
                                             while ($sqlfet_listStudyData = mysqli_fetch_assoc($sqlres_listStudyData)) {
@@ -440,17 +452,19 @@ if ($sqlres_milProfile) {
                                     <h5>ไม่มีข้อมูล</h5>
                                 </div>
                             </div>
-                            <?
+                            <?php
                         }
                         ?>
                     </div>
-                </div>
+                </div><!-- End of Card#02 -->
             </div>
-        </div><!-- Card #02 -->
+        </div><!-- End of Box#02 -->
 
-        <!-- Card #03 -->
+        <!-- Box#03 -->
         <div class="row mt-5">
             <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2 d-flex justify-content-center">
+
+                <!-- Card #03 -->
                 <div class="card shadow-lg" style="width: 100%;">
                     <div class="card-body">
                         <h6 class="card-subtitle mb-2 text-muted"><?= $milNumber; ?></h6>
@@ -472,14 +486,14 @@ if ($sqlres_milProfile) {
                             <div class="row mt-3">
                                 <div class="col-12 table-responsive">
                                     <table class="table table-striped">
+                                        <thead>
                                         <tr>
-                                            <thead>
                                             <th>หลักสูตร</th>
                                             <th>จัดโดย</th>
                                             <th>ระยะเวลา</th>
                                             <th></th>
-                                            </thead>
                                         </tr>
+                                        </thead>
                                         <tbody>
                                         <?php
                                         $sqlcmd_listCourse = "SELECT * FROM mas_milcourse WHERE mil_number='" . $milNumber . "'";
@@ -513,197 +527,531 @@ if ($sqlres_milProfile) {
                                     <h5>ไม่มีข้อมูล</h5>
                                 </div>
                             </div>
-                            <?
+                            <?php
                         }
                         ?>
                     </div>
 
+                </div><!-- Card #03 -->
+            </div>
+        </div><!-- End of Box#03 -->
+
+        <!-- Box#04 -->
+        <div class="row mt-5 mb-5">
+            <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2 d-flex justify-content-center">
+
+                <!-- Card #04 -->
+                <div class="card shadow-lg" style="width: 100%;">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted"><?= $milNumber; ?></h6>
+                        <div class="row">
+                            <div class="col-6"><h5 class="card-title">ข้อมูลการรับราชการ</h5></div>
+                            <!-- Toggle swith was here -->
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3"><label for="id4DateGovStart">บรรจุเข้ารับราชการเมื่อ</label>
+                            </div>
+                            <div class="col-3">
+                                <input type="text" name="" id="id4DateGovStart" class="form-control form-control-sm"
+                                       disabled value="<?= monthThai($pfDateInGov); ?>">
+                            </div>
+                            <div class="col-3 text-md-right"><label for="id4SumDateInGov">รวมระยะเวลารับราชการ</label>
+                            </div>
+                            <div class="col-3">
+                                <input type="text" name="" id="id4SumDateInGov"
+                                       class="form-control form-control-sm" disabled value="<?php
+                                if (!empty($pfDateInGov)) {
+                                    list($yy, $mm, $dd) = explode(",", dateDiff($pfDateInGov, dateBE($dateIsNow)));
+                                    if ($yy < 60) {
+                                        if ($yy != 0)
+                                            echo $yy . " ปี ";
+                                        if ($mm != 0)
+                                            echo $mm . " เดือน ";
+                                        if ($dd != 0)
+                                            echo $dd . " วัน";
+                                    } else
+                                        echo "-";
+                                } else
+                                    echo "อายุ ปี เดือน วัน";
+                                ?>">
+                            </div>
+                        </div><!-- in Gov infomation -->
+
+                        <div class="row mt-3">
+                            <div class="col-8"><label for="id4MilSumDateWork">การปฏิบัติหน้าที่ครูทหาร/ครูวิชาการ
+                                    ก่อนดำรงตำแหน่งปัจจุบัน รวมเป็นระยะเวลา</label>
+                            </div>
+                            <div class="col-3 offset-1">
+                                <input type="text" name="" id="id4MilSumDateWork" class="form-control form-control-sm"
+                                       readonly value="">
+                                <!-- onclick="milSumDateWork()" placeholder="คลิกเพื่ออัพเดทข้อมูล"> -->
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12 table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                    <tr class="bg-light">
+                                        <th>ดำรงตำแหน่ง</th>
+                                        <th>หลักฐาน (คำสั่ง)</th>
+                                        <th>ไฟล์หลักฐาน</th>
+                                        <th>ระยะเวลา</th>
+                                        <th class="">
+                                            <!-- Toggle switch -->
+                                            <span data-toggle="modal" data-target="#id4MilWorkModal">
+                                                    <a href="#" data-toggle="tooltip" data-placement="right"
+                                                       title="เพิ่มข้อมูล"><i
+                                                                class="fas fa-plus font-weight-bold text-success"></i></a>
+                                                </span><!-- Toggle switch -->
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php
+                                    $ySum = 0;
+                                    $mSum = 0;
+                                    $dSum = 0;
+                                    $sqlcmd_listMilWork = "SELECT * FROM mas_milwork WHERE mil_number='" . $milNumber . "' AND mil_workisnow='0' ORDER BY mil_workstart";
+                                    $sqlres_listMilWork = mysqli_query($dbConn, $sqlcmd_listMilWork);
+                                    if ($sqlres_listMilWork) {
+                                        while ($sqlfet_listMilWork = mysqli_fetch_assoc($sqlres_listMilWork)) {
+                                            ?>
+                                            <tr>
+                                                <td><?= $sqlfet_listMilWork['mil_position']; ?></td>
+                                                <td><?= $sqlfet_listMilWork['mil_command']; ?></td>
+                                                <td><a href="" data-toggle="tooltip" data-placement="right"
+                                                       title="ไฟล์ pdf หรือ png หรือ jpg"><i class="far fa-plus-square text-success"></i></a></td>
+                                                <td><?php
+                                                    $milWorkStart = substr($sqlfet_listMilWork['mil_workstart'], 0, 11);
+                                                    $milWorkStop = substr($sqlfet_listMilWork['mil_workstop'], 0, 11);
+                                                    ?>
+                                                    <div><?= monthThai(dateBE($milWorkStart)) . " ถึง " . monthThai(dateBE($milWorkStop)); ?></div>
+                                                    <div>(<?php
+                                                        if (!empty($pfDateInGov)) {
+                                                            list($yy, $mm, $dd) = explode(",", dateDiff($milWorkStart, $milWorkStop));
+                                                            if ($yy < 60) {
+                                                                if ($yy != 0)
+                                                                    echo $yy . " ปี ";
+                                                                if ($mm != 0)
+                                                                    echo $mm . " เดือน ";
+                                                                if ($dd != 0)
+                                                                    echo $dd . " วัน";
+                                                            } else
+                                                                echo "ข้อมูลผิดพลาด";
+                                                        } else
+                                                            echo "อายุ ปี เดือน วัน";
+                                                        ?>)
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a href="./userWorkAct.php?command=delCourseData&id2Delete=<?= $sqlfet_listMilWork['id']; ?>"
+                                                       onclick="return confirm('ต้องการลบข้อมูลนี้')"><i
+                                                                class="far fa-times-circle text-danger"></i></a>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                            $dSum += $dd;
+                                            if ($dSum > 30) {
+                                                $mSum += floor($dSum / 30);
+                                                $dSum = $dSum % 30;
+                                            }
+                                            $mSum += $mm;
+                                            if ($mSum > 12) {
+                                                $ySum += floor($mSum / 12);
+                                                $mSum = $mSum % 12;
+                                            }
+                                            $ySum += $yy;
+                                        }
+                                    }
+                                    ?>
+                                    <tr>
+                                        <td colspan="3" class="text-right">
+                                            รวมระยะเวลาปฏิบัติงานตามหน้าที่รับผิดชอบดานการเรียนการสอน
+                                        </td>
+                                        <td class="font-weight-bold">
+                                            <?php
+                                            if ($ySum < 60) {
+                                                $milSumDateWork = $ySum . " ปี " . $mSum . " เดือน " . $dSum . " วัน";
+                                                echo $milSumDateWork;
+                                            } else {
+                                                echo "ข้อมูลผิดพลาด";
+                                            }
+                                            ?>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <hr>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3"><label for="id4ASNow">ปัจจุบันดำรงตำแหน่งประเภทวิทยฐานะ</label>
+                                <!--<span data-toggle="modal" data-target="#id4MilWorkNowModal">
+                                <a href="#" data-toggle="tooltip" data-placement="right" title="คลิกเพื่อแก้ไข"><i
+                                            class="fas fa-info-circle text-primary"></i></a>
+                                </span>-->
+                            </div>
+
+                            <div class="col-3">
+                                <?php
+                                $sqlcmd_milWorkNow = "SELECT * FROM mas_milwork WHERE mil_number='" . $milNumber . "' AND mil_workisnow='1'";
+                                $sqlres_milWorkNow = mysqli_query($dbConn, $sqlcmd_milWorkNow);
+                                if ($sqlres_milWorkNow)
+                                    $sqlfet_milWorkNow = mysqli_fetch_assoc($sqlres_milWorkNow);
+
+                                $milWorkPosition = $sqlfet_milWorkNow['mil_position'];
+                                ?>
+                                <input type="text" name="" id="id4ASNow" class="form-control form-control-sm" disabled
+                                       value="<?= /*$milWorkPosition*/
+                                       $pfWorkPosition; ?>">
+                            </div>
+                            <!--
+                            <div class="col-3">
+                                <input type="text" name="" id="" class="form-control form-control-sm" disabled
+                                       value="<? /*= getValue('mas_as', 'as_number', $pfASNow, 1, 'as_name'); */ ?>">
+                            </div> -->
+                            <div class="col-1">
+                                <label for="id4DateASNowStart">เมื่อวันที่</label>
+                            </div>
+                            <div class="col-2">
+                                <input type="text" name="" id="id4DateASNowStart" class="form-control form-control-sm"
+                                       value="<?= monthThai(dateBE(substr(dateAD($pfDateASNow), 0, 11))); ?>"
+                                       disabled>
+                            </div>
+
+                            <div class="col-1">
+                                <label for="id4SumDate2Show">รวมเป็น</label>
+                            </div>
+                            <div class="col-2">
+                                <?php
+                                //$tmpStart = substr($sqlfet_milWorkNow['mil_workstart'], 0, 11);
+                                //echo $pfDateASNow;
+                                list($yy, $mm, $dd) = explode(",", dateDiff(dateAD($pfDateASNow), $dateNow));
+                                $date2Show = '';
+                                if ($yy < 60) {
+                                    if ($yy != 0)
+                                        $date2Show .= $yy . " ปี ";
+                                    if ($mm != 0)
+                                        $date2Show .= $mm . " เดือน ";
+                                    if ($dd != 0)
+                                        $date2Show .= $dd . " วัน";
+                                } else
+                                    $date2Show = "ข้อมูลผิดพลาด";
+                                ?>
+                                <input type="text" name="" id="id4SumDate2Show" class="form-control form-control-sm"
+                                       value="<?= $date2Show; ?>" disabled>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-7"><label for="id4SumDateTeach">รวมระยะเวลาปฏิบัติงานตามหน้าที่รับผิดชอบด้านการเรียนการสอนทั้งสิ้น</label>
+                            </div>
+                            <div class="col-3">
+                                <input type="text" name="" id="id4SumDateTeach" class="form-control form-control-sm"
+                                       value="" disabled>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div><!-- Card #04 -->
+            </div>
+        </div><!-- End of Box#04 -->
+
+        <br><br>
+    </div>
+
+
+    <!-- Modal for study -->
+    <div class="modal fade" id="id4StudyModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">เพิ่มข้อมูลคุณวุฒิทางการศึกษา</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
+                <form action="./userStudyAct.php" method="post">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="id4SchoolLevel">ระดับการศึกษา</label>
+                                <select name="schoolLevel" id="id4SchoolLevel"
+                                        class="form-control form-control-sm" required>
+                                    <option value="1">ตำกว่าปริญญาตรี</option>
+                                    <option value="2">ระดับปริญญาตรี</option>
+                                    <option value="3">ระดับปริญญาโท</option>
+                                    <option value="4">ระดับปริญญาเอก</option>
+                                    <option value="5">หลังปริญญาเอก</option>
+                                </select>
+                            </div>
+                            <div class="col-8">
+                                <label for="id4SchoolName">ชื่อสถาบันการศึกษา</label>
+                                <input type="text" name="schoolName" id="id4SchoolName"
+                                       class="form-control form-control-sm" placeholder="ชื่อสถาบันการศึกษา">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-4">
+                                <label for="id4YrFinish">ปีที่สำเร็จการศึกษา</label>
+                                <input type="text" name="yrFinish" id="id4YrFinish" class="form-control form-control-sm"
+                                       placeholder="ปีที่สำเร็จการศึกษา">
+                            </div>
+                            <div class="col-4">
+                                <label for="id4SchoolBranch">สาขาที่สำเร็จการศึกษา</label>
+                                <input type="text" name="schoolBranch" id="id4SchoolBranch"
+                                       class="form-control form-control-sm" placeholder="สาขาที่สำเร็จการศึกษา">
+                            </div>
+                            <div class="col-4">
+                                <label for="id4SchoolMajor">วิชาเอกที่สำเร็จการศึกษา</label>
+                                <input type="text" name="schoolMajor" id="id4SchoolMajor"
+                                       class="form-control form-control-sm" placeholder="วิชาเอกที่สำเร็จการศึกษา">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">ปิด</button>
+                        <button type="submit" class="btn btn-sm btn-primary">บันทึก</button>
+                    </div>
+
+                    <input type="hidden" name="processName" value="addDataStudy">
+                    <input type="hidden" name="milNumber" value="<?= $milNumber; ?>">
+                </form>
             </div>
         </div>
-    </div><!-- Card #03 -->
-</div>
+    </div><!-- Modal for study -->
 
-</div>
+    <!-- Modal for military study -->
+    <div class="modal fade" id="id4MilStudyModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">เพิ่มข้อมูลคุณวุฒิทางการศึกษาทางทหาร</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="./userStudyAct.php" method="post">
 
-<!-- Modal for study -->
-<div class="modal fade" id="id4StudyModal">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">เพิ่มข้อมูลคุณวุฒิทางการศึกษา</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                    <div class="modal-body">
+                        <div class="row mt-3">
+                            <div class="col-4">
+                                <label for="id4CourseName">หลักสูตร</label>
+                                <input type="text" name="courseName" id="id4CourseName"
+                                       class="form-control form-control-sm"
+                                       placeholder="ชื่อหลักสูตร">
+                            </div>
+                            <div class="col-4">
+                                <label for="id4CourseOpener">จัดโดย</label>
+                                <input type="text" name="courseOpener" id="id4CourseOpener"
+                                       class="form-control form-control-sm" placeholder="หน่วยงานที่จัดฝึกอบรม">
+                            </div>
+                            <div class="col-4">
+                                <label for="id4CourseYear">วัน-เวลาที่ฝึกอบรม</label>
+                                <input type="text" name="courseYear" id="id4CourseYear"
+                                       class="form-control form-control-sm" placeholder="วัน-เวลาที่ฝึกอบรม">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">ปิด</button>
+                        <button type="submit" class="btn btn-sm btn-primary">บันทึก</button>
+                    </div>
+
+                    <input type="hidden" name="processName" value="addMilCourse">
+                    <input type="hidden" name="milNumber" value="<?= $milNumber; ?>">
+                </form>
             </div>
-            <form action="./userStudyAct.php" method="post">
+        </div>
+    </div><!-- Modal for military study -->
+
+    <!-- Modal for military work -->
+    <div class="modal fade" id="id4MilWorkModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">เพิ่มข้อมูลการรับราชการ</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <form action="./userWorkAct.php" method="post">
+
+                    <div class="modal-body">
+                        <div class="row mt-3">
+
+                            <!-- Toggle switch -->
+                            <div class="col-6 pl-5 custom-control custom-switch d-flex justify-content-start">
+                                <input type="checkbox" class="custom-control-input" id="customSwitch2">
+                                <label class="custom-control-label" for="customSwitch2">เป็นตำแหน่งปัจจุบัน</label>
+                            </div><!-- Toggle switch -->
+
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3">
+                                <label for="id4MilWorkPos">ดำรงตำแหน่ง</label>
+                                <input type="text" name="milWorkPos" id="id4MilWorkPos"
+                                       class="form-control form-control-sm"
+                                       placeholder="">
+                            </div>
+                            <div class="col-3">
+                                <label for="id4MilWorkCmd">คำสั่ง</label>
+                                <input type="text" name="milWorkCmd" id="id4MilWorkCmd"
+                                       class="form-control form-control-sm"
+                                       placeholder="">
+                            </div>
+                            <div class="col-3">
+                                <label for="id4MilWorkStart">ตั้งแต่</label>
+                                <input type="text" name="milWorkStart" id="id4MilWorkStart"
+                                       class="form-control form-control-sm" placeholder="">
+                            </div>
+                            <div class="col-3">
+                                <label for="id4MilWorkStop">ถึง</label>
+                                <input type="text" name="milWorkStop" id="id4MilWorkStop"
+                                       class="form-control form-control-sm" placeholder="">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">ปิด</button>
+                        <button type="submit" class="btn btn-sm btn-primary">บันทึก</button>
+                    </div>
+
+                    <input type="hidden" name="processName" value="addMilWork">
+                    <input type="hidden" name="milNumber" value="<?= $milNumber; ?>">
+                    <input type="hidden" name="milWorkIsNow" value="1" disabled id="id4MilWorkIsNow">
+                </form>
+            </div>
+        </div>
+    </div><!-- Modal for military work -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="id4MilWorkNowModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">แก้ไขงานปัจจุบัน</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-4">
-                            <label for="id4ScoolLevel">ระดับการศึกษา</label>
-                            <select name="schoolLevel" id="id4SchoolLevel"
-                                    class="form-control form-control-sm" required>
-                                <option value="1">ตำกว่าปริญญาตรี</option>
-                                <option value="2">ระดับปริญญาตรี</option>
-                                <option value="3">ระดับปริญญาโท</option>
-                                <option value="4">ระดับปริญญาเอก</option>
-                                <option value="5">หลังปริญญาเอก</option>
-                            </select>
-                        </div>
-                        <div class="col-8">
-                            <label for="id4SchoolName">ชื่อสถาบันการศึกษา</label>
-                            <input type="text" name="schoolName" id="id4SchoolName"
-                                   class="form-control form-control-sm" placeholder="ชื่อสถาบันการศึกษา">
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-4">
-                            <label for="id4YrFinish">ปีที่สำเร็จการศึกษา</label>
-                            <input type="text" name="yrFinish" id="id4YrFinish" class="form-control form-control-sm"
-                                   placeholder="ปีที่สำเร็จการศึกษา">
-                        </div>
-                        <div class="col-4">
-                            <label for="id4SchoolBranch">สาขาที่สำเร็จการศึกษา</label>
-                            <input type="text" name="schoolBranch" id="id4SchoolBranch"
-                                   class="form-control form-control-sm" placeholder="สาขาที่สำเร็จการศึกษา">
-                        </div>
-                        <div class="col-4">
-                            <label for="id4SchoolMajor">วิชาเอกที่สำเร็จการศึกษา</label>
-                            <input type="text" name="schoolMajor" id="id4SchoolMajor"
-                                   class="form-control form-control-sm" placeholder="วิชาเอกที่สำเร็จการศึกษา">
-                        </div>
-                    </div>
+                    ...
                 </div>
-
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">ปิด</button>
-                    <button type="submit" class="btn btn-sm btn-primary">บันทึก</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
-
-                <input type="hidden" name="processName" value="addDataStudy">
-                <input type="hidden" name="milNumber" value="<?= $milNumber; ?>">
-            </form>
+            </div>
         </div>
     </div>
-</div><!-- Modal for study -->
 
-<!-- Modal for military study -->
-<div class="modal fade" id="id4MilStudyModal">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">เพิ่มข้อมูลคุณวุฒิทางการศึกษาทางทหาร</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="./userStudyAct.php" method="post">
+    <!-- Popper and Bootstrap JS -->
+    <script src="./js/jquery-3.5.1.slim.min.js"></script>
+    <script src="./js/popper.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <!-- jQuery Custom Scroller CDN -->
+    <script src="./js/jquery.mCustomScrollbar.concat.min.js"></script>
 
-                <div class="modal-body">
-                    <div class="row mt-3">
-                        <div class="col-4">
-                            <label for="id4YrFinish">หลักสูตร</label>
-                            <input type="text" name="courseName" id="id4CourseName" class="form-control form-control-sm"
-                                   placeholder="ชือ่หลักสูตร">
-                        </div>
-                        <div class="col-4">
-                            <label for="id4SchoolBranch">จัดโดย</label>
-                            <input type="text" name="courseOpener" id="id4CourseOpener"
-                                   class="form-control form-control-sm" placeholder="หน่วยงานที่จัดฝึกอบรม">
-                        </div>
-                        <div class="col-4">
-                            <label for="id4SchoolMajor">วัน-เวลาที่ฝึกอบรม</label>
-                            <input type="text" name="courseYear" id="id4CourseYear"
-                                   class="form-control form-control-sm" placeholder="วัน-เวลาที่ฝึกอบรม">
-                        </div>
-                    </div>
+    <!-- Project script -->
+    <script src="./js/prjScript.js"></script>
+    <script src="./js/picker_date.js"></script>
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">ปิด</button>
-                    <button type="submit" class="btn btn-sm btn-primary">บันทึก</button>
-                </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#sidebar").mCustomScrollbar({
+                theme: "minimal"
+            });
 
-                <input type="hidden" name="processName" value="addMilCourse">
-                <input type="hidden" name="milNumber" value="<?= $milNumber; ?>">
-            </form>
-        </div>
-    </div>
-</div><!-- Modal for military study -->
-
-<!-- Popper and Bootstrap JS -->
-<script src="./js/jquery-3.5.1.slim.min.js"></script>
-<script src="./js/popper.min.js"></script>
-<script src="./js/bootstrap.min.js"></script>
-<!-- jQuery Custom Scroller CDN -->
-<script src="./js/jquery.mCustomScrollbar.concat.min.js"></script>
-
-<!-- Project script -->
-<script src="./js/prjScript.js"></script>
-<script src="./js/picker_date.js"></script>
-
-<script type="text/javascript">
-    $(document).ready(function () {
-        $("#sidebar").mCustomScrollbar({
-            theme: "minimal"
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar, #content').toggleClass('active');
+                $('.collapse.in').toggleClass('in');
+                // $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+            });
         });
+    </script>
 
-        $('#sidebarCollapse').on('click', function () {
-            $('#sidebar, #content').toggleClass('active');
-            $('.collapse.in').toggleClass('in');
-            // $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+    <!-- Tooltips bootstrap -->
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+
+    <script>
+        //กำหนดให้ textbox ที่มี id เท่ากับ my_date เป็นตัวเลือกแบบ ปฎิทิน
+        picker_date(document.getElementById("id4DateBirth"), {year_range: "-60:+2"});
+        picker_date(document.getElementById("id4DateInGov"), {year_range: "-50:+2"});
+        picker_date(document.getElementById("id4DateAS"), {year_range: "-30:+2"});
+        picker_date(document.getElementById("id4MilWorkStart"), {year_range: "-50:+2"});
+        picker_date(document.getElementById("id4MilWorkStop"), {year_range: "-50:+2"});
+        /*{year_range:"-12:+10"} คือ กำหนดตัวเลือกปฎิทินให้ แสดงปี ย้อนหลัง 12 ปี และ ไปข้างหน้า 10 ปี*/
+    </script>
+
+    <script>
+        $("#customSwitch1").on("change click", function () {
+            if ($("#customSwitch1").is(":checked")) {
+                $("#id4Row4Button").removeClass("d-none");
+                $("#id4RowMisc1").removeClass("d-none");
+                $("#id4EditRow3").removeClass("d-none");
+                // $("#id4Row0").removeClass("d-none");
+
+                $("#id4Row2").addClass("d-none");
+                $("#id4Row3").addClass("d-none");
+
+                $("#if4PfNameFirst").attr("disabled", false);
+                $("#if4PfNameLast").attr("disabled", false);
+                $("#id4SalaryLevel").attr("disabled", false);
+                $("#id4SalaryFloor").attr("disabled", false);
+                $("#id4Salary").attr("disabled", false);
+            } else {
+                $("#id4Row4Button").addClass("d-none");
+                $("#id4RowMisc1").addClass("d-none");
+                $("#id4EditRow3").addClass("d-none");
+                // $("#id4Row0").addClass("d-none");
+
+                $("#id4Row2").removeClass("d-none");
+                $("#id4Row3").removeClass("d-none");
+
+                $("#if4PfNameFirst").attr("disabled", true);
+                $("#if4PfNameLast").attr("disabled", true);
+                $("#id4SalaryLevel").attr("disabled", true);
+                $("#id4SalaryFloor").attr("disabled", true);
+                $("#id4Salary").attr("disabled", true);
+            }
         });
-    });
-</script>
+    </script>
 
-<!-- Tooltips bootstrap -->
-<script>
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
-</script>
+    <script>
+        $("#customSwitch2").on("change click", function () {
+            if ($("#customSwitch2").is(":checked")) {
+                $("#id4MilWorkStop").attr("disabled", true);
+                $("#id4MilWorkStop").css("background", "grey");
+                $("#id4MilWorkIsNow").attr("disabled", false);
+            } else {
+                $("#id4MilWorkStop").attr("disabled", false);
+                $("#id4MilWorkStop").css("background", "white");
+                $("#id4MilWorkIsNow").attr("disabled", false);
+            }
+        });
+    </script>
 
-<script>
-    //กำหนดให้ textbox ที่มี id เท่ากับ my_date เป็นตัวเลือกแบบ ปฎิทิน
-    picker_date(document.getElementById("id4DateBirth"), {year_range: "-60:+2"});
-    picker_date(document.getElementById("id4DateInGov"), {year_range: "-50:+2"});
-    picker_date(document.getElementById("id4DateAS"), {year_range: "-30:+2"});
-    /*{year_range:"-12:+10"} คือ กำหนดตัวเลือกปฎิทินให้ แสดงปี ย้อนหลัง 12 ปี และ ไปข้างหน้า 10 ปี*/
-</script>
-
-<script>
-    $("#customSwitch1").on("change click", function () {
-        if ($("#customSwitch1").is(":checked")) {
-            $("#id4Row4Button").removeClass("d-none");
-            $("#id4RowMisc1").removeClass("d-none");
-            $("#id4EditRow3").removeClass("d-none");
-            // $("#id4Row0").removeClass("d-none");
-
-            $("#id4Row2").addClass("d-none");
-            $("#id4Row3").addClass("d-none");
-
-            $("#if4PfNameFirst").attr("disabled", false);
-            $("#if4PfNameLast").attr("disabled", false);
-            $("#id4SalaryLevel").attr("disabled", false);
-            $("#id4SalaryFloor").attr("disabled", false);
-            $("#id4Salary").attr("disabled", false);
-        } else {
-            $("#id4Row4Button").addClass("d-none");
-            $("#id4RowMisc1").addClass("d-none");
-            $("#id4EditRow3").addClass("d-none");
-            // $("#id4Row0").addClass("d-none");
-
-            $("#id4Row2").removeClass("d-none");
-            $("#id4Row3").removeClass("d-none");
-
-            $("#if4PfNameFirst").attr("disabled", true);
-            $("#if4PfNameLast").attr("disabled", true);
-            $("#id4SalaryLevel").attr("disabled", true);
-            $("#id4SalaryFloor").attr("disabled", true);
-            $("#id4Salary").attr("disabled", true);
-        }
-    });
-</script>
+    <script>
+        let milSumDateWork = '<?=$milSumDateWork;?>';
+        let milWorkPosition = '<?=$milWorkPosition;?>';
+         document.getElementById("id4MilSumDateWork").value = milSumDateWork;
+         document.getElementById("id4Position").value = milWorkPosition;
+         document.getElementById("id4WorkPosition").value = milWorkPosition;
+    </script>
 
 </body>
 </html>

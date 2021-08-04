@@ -32,85 +32,97 @@ $pfData = array(
 
 $pfRank = $pfData['pfRank'];
 $pfSex = $pfData['pfSex'];
+if (empty($pfSex)) {
+    $pfSex = '1';
+}
 
-$tmpNameFirst = explode(" ", $pfData['pfNameFirst']);
-if (count($tmpNameFirst) > 1)
-    if ($pfSex === '2')
-        $pfNameFirst = $tmpNameFirst[2];
-    else
-        $pfNameFirst = $tmpNameFirst[1];
-else
+$tmpNameFirst = str_replace("หญิง ", "", $pfData['pfNameFirst']);
+$tmpNameFirst = explode(" ", $tmpNameFirst);
+if (count($tmpNameFirst) > 1) {
+    $pfNameFirst = $tmpNameFirst[1];
+} else {
     $pfNameFirst = $tmpNameFirst[0];
+}
 
-$pfNameLast = $pfData['pfNameLast'];
+// Remove ร.น.
+$tmpNameLast = str_replace(" ร.น.", "", $pfData['pfNameLast']);
+$pfNameLast = $tmpNameLast;
+
 $pfASNow = $pfData['pfASNow'];
 $pfWorkOffice = $pfData['pfWorkOffice'];
 $pfWorkPosition = $pfData['pfWorkPosition'];
 
 $pfDateBirth = $pfData['pfDateBirth'];
-if (!empty($pfDateBirth))
+if (!empty($pfDateBirth)) {
     $pfDateBirth = dateAD($pfDateBirth) . " 08:00:00";
-else {
+} else {
     $tmpDateBirth = getValue('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_datebirth');
-    if (empty($tmpDateBirth))
-        $pfDateBirth = "1970-01-01 08:00:00";
-    else
+    if (empty($tmpDateBirth)) {
+        $pfDateBirth = "1900-01-01 08:00:00";
+    } else {
         $pfDateBirth = $tmpDateBirth;
+    }
 }
 
 $pfDateInGov = $pfData['pfDateInGov'];
-if (!empty($pfDateInGov))
+if (!empty($pfDateInGov)) {
     $pfDateInGov = dateAD($pfDateInGov) . " 08:00:00";
-else {
+} else {
     $tmpDateInGov = getValue('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_dateingov');
-    if (empty($tmpDateInGov))
-        $pfDateInGov = "1970-01-01 08:00:00";
-    else
+    if (empty($tmpDateInGov)) {
+        $pfDateInGov = "1900-01-01 08:00:00";
+    } else {
         $pfDateInGov = $tmpDateInGov;
+    }
 }
 
 $pfDateASNow = $pfData['pfDateASNow'];
-if (!empty($pfDateASNow))
+if (!empty($pfDateASNow)) {
     $pfDateASNow = dateAD($pfDateASNow) . " 08:00:00";
-else {
+} else {
     $tmpDateASNow = getValue('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_dateasnow');
-    if (empty($tmpDateASNow))
-        $pfDateASNow = "1970-01-01 08:00:00";
-    else
+    if (empty($tmpDateASNow)) {
+        $pfDateASNow = "1900-01-01 08:00:00";
+    } else {
         $pfDateASNow = $tmpDateASNow;
+    }
 }
+
 
 $pfSalaryLevel = $pfData['pfSalaryLevel'];
 $pfSalaryFloor = $pfData['pfSalaryFloor'];
 $pfSalary = $pfData['pfSalary'];
-if (!empty($pfSalary))
-    $pfSalary = $pfData['pfSalary'];
-else
+if (!empty($pfSalary)) {
+    $pfSalary = str_replace(',', '', $pfData['pfSalary']);
+    $pfSalary = floatval($pfSalary);
+} else {
     $pfSalary = 0;
+}
 
 // Profile data
 if (!empty($varpost_processName)) {
     switch ($varpost_processName) {
         case 'updateProfile':
-            $chkExist = countDB('tbl_profiles', 'mil_number', $milNumber, 2);
-            if ($chkExist == '0') {
+            $chkUserExist = countDB('tbl_profiles', 'mil_number', $milNumber, 2);
+            if ($chkUserExist === '0') {
+                // 0 for no user existing
                 insertDB('tbl_profiles', 'mil_number', $milNumber, 2);
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_namefirst', $pfNameFirst, 2);
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_namelast', $pfNameLast, 2);
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_rank', $pfRank, 2);
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_sex', $pfSex, 2);
 
-                if (!empty($pfDateBirth))
-                    updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_datebirth', $pfDateBirth, 2);
-                if (!empty($pfDateInGov))
-                    updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_dateingov', $pfDateInGov, 2);
+                //if (!empty($pfDateBirth))
+                updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_datebirth', $pfDateBirth, 2);
+                //if (!empty($pfDateInGov))
+                updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_dateingov', $pfDateInGov, 2);
 
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_office', $pfWorkOffice, 2);
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_position', $pfWorkPosition, 2);
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_asnow', $pfASNow, 2);
 
-                if (!empty($pfDateASNow))
-                    updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_dateasnow', $pfDateASNow, 2);
+                //if (!empty($pfDateASNow))
+                updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_dateasnow', $pfDateASNow, 2);
 
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_salarylevel', $pfSalaryLevel, 2);
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_salaryfloor', $pfSalaryFloor, 2);
@@ -124,17 +136,17 @@ if (!empty($varpost_processName)) {
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_rank', $pfRank, 2);
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_sex', $pfSex, 2);
 
-                if (!empty($pfDateBirth))
-                    updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_datebirth', $pfDateBirth, 2);
-                if (!empty($pfDateInGov))
-                    updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_dateingov', $pfDateInGov, 2);
+                //if (!empty($pfDateBirth))
+                updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_datebirth', $pfDateBirth, 2);
+                //if (!empty($pfDateInGov))
+                updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_dateingov', $pfDateInGov, 2);
 
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_office', $pfWorkOffice, 2);
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_position', $pfWorkPosition, 2);
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_asnow', $pfASNow, 2);
 
-                if (!empty($pfDateASNow))
-                    updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_dateasnow', $pfDateASNow, 2);
+                //if (!empty($pfDateASNow))
+                updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_dateasnow', $pfDateASNow, 2);
 
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_salarylevel', $pfSalaryLevel, 2);
                 updateDB('tbl_profiles', 'mil_number', $milNumber, 2, 'pf_salaryfloor', $pfSalaryFloor, 2);

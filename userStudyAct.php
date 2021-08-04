@@ -26,7 +26,7 @@ $courseData = array(
     "courseOpener" => filter_input(INPUT_POST, 'courseOpener'),
     "courseYear" => filter_input(INPUT_POST, 'courseYear')
 );
-$courseName = $courseData['courseYear'];
+$courseName = $courseData['courseName'];
 $courseOpener = $courseData['courseOpener'];
 $courseYear = $courseData['courseYear'];
 
