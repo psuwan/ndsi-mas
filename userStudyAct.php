@@ -6,6 +6,7 @@ $varget_id2delete = filter_input(INPUT_GET, 'id2delete');
 $varget_command = filter_input(INPUT_GET, 'command');
 $varpost_processName = filter_input(INPUT_POST, 'processName');
 $milNumber = filter_input(INPUT_POST, 'milNumber');
+$varpost_id2edit = filter_input(INPUT_POST, 'id2edit');
 
 $studyData = array(
     "schoolLevel" => filter_input(INPUT_POST, 'schoolLevel'),
@@ -52,6 +53,31 @@ if (!empty($varpost_processName)) {
             } else {
                 echo "ERROR!! [" . mysqli_errno($dbConn) . "]--[" . mysqli_error($dbConn) . "]";
             }
+            break;
+
+        case 'editMilCourse':
+
+            updateDB('mas_milcourse', 'id', $varpost_id2edit, 1, 'course_name', $courseName, 2);
+            updateDB('mas_milcourse', 'id', $varpost_id2edit, 1, 'course_opener', $courseOpener, 2);
+            updateDB('mas_milcourse', 'id', $varpost_id2edit, 1, 'course_year', $courseYear, 2);
+
+            echo "<script>alert('แก้ไขข้อมูลแล้ว')</script>";
+            echo "<script>window.location.href='./userProfile.php';</script>";
+            break;
+
+        case 'editDataStudy':
+//            echo "<pre>";
+//            var_dump($_POST);
+//            echo "</pre>";
+
+            updateDB('mas_userschool', 'id', $varpost_id2edit, 1, 'school_level', $schoolLevel, 2);
+            updateDB('mas_userschool', 'id', $varpost_id2edit, 1, 'school_name', $schoolName, 2);
+            updateDB('mas_userschool', 'id', $varpost_id2edit, 1,'school_year', $yrFinish, 2);
+            updateDB('mas_userschool', 'id', $varpost_id2edit, 1, 'school_branch', $schoolBranch, 2);
+            updateDB('mas_userschool', 'id', $varpost_id2edit, 1, 'school_major', $schoolMajor, 2);
+
+            echo "<script>alert('แก้ไขข้อมูลแล้ว')</script>";
+            echo "<script>window.location.href='./userProfile.php';</script>";
             break;
     }
 }

@@ -42,20 +42,20 @@ for ($i = 0; $i < $countfiles; $i++) {
         $fileNameExtend = getToken(10);
         $temp = explode(".", $_FILES[$countType]['name'][$i]);
 //        $newfilename = $upload_location . $varpost_fileRefNumber . "_" . $i . '.' . end($temp);
-        $newfilename = $upload_location . $varpost_fileRefNumber . "_" . $fileNameExtend . '.' . end($temp);
+        $newfilename = $upload_location . $varpost_fileRefNumber . $fileNameExtend . '.' . end($temp);
         //psuwan's edited
         if (move_uploaded_file($_FILES[$countType]['tmp_name'][$i], $newfilename)) {
             // from Example
             // if (move_uploaded_file($_FILES['files']['tmp_name'][$i], $path)) {
             $count += 1;
             $cntRefInEvdChk = countDB('mas_evdchk', 'evd_refnumber', $varpost_fileRefNumber, 2);
-            if($cntRefInEvdChk==='0'){
+            if ($cntRefInEvdChk === '0') {
                 insertDB('mas_evdchk', 'evd_refnumber', $varpost_fileRefNumber, 2);
-                updateDB('mas_evdchk', 'evd_refnumber', $varpost_fileRefNumber, 2, 'evd_newup', '1',2);
-                updateDB('mas_evdchk', 'evd_refnumber', $varpost_fileRefNumber, 2, 'evd_chked', '0',2);
-            }else{
-                updateDB('mas_evdchk', 'evd_refnumber', $varpost_fileRefNumber, 2, 'evd_newup', '1',2);
-                updateDB('mas_evdchk', 'evd_refnumber', $varpost_fileRefNumber, 2, 'evd_chked', '0',2);
+                updateDB('mas_evdchk', 'evd_refnumber', $varpost_fileRefNumber, 2, 'evd_newup', '1', 2);
+                updateDB('mas_evdchk', 'evd_refnumber', $varpost_fileRefNumber, 2, 'evd_chked', '0', 2);
+            } else {
+                updateDB('mas_evdchk', 'evd_refnumber', $varpost_fileRefNumber, 2, 'evd_newup', '1', 2);
+                updateDB('mas_evdchk', 'evd_refnumber', $varpost_fileRefNumber, 2, 'evd_chked', '0', 2);
             }
         }
     }

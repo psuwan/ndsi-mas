@@ -11,7 +11,7 @@ $timeNow = date("H:i:s");
 $mil2View = filter_input(INPUT_GET, 'milNumber');
 
 // Get profile for milNumber
-$sqlcmd_milProfile = "SELECT * FROM tbl_profiles WHERE mil_number='" . $mil2View . "'";
+$sqlcmd_milProfile = "SELECT * FROM mas_profiles WHERE mil_number='" . $mil2View . "'";
 $sqlres_milProfile = mysqli_query($dbConn, $sqlcmd_milProfile);
 if ($sqlres_milProfile) {
     $sqlnum_milProfile = mysqli_num_rows($sqlres_milProfile);

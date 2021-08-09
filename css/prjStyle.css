@@ -15,6 +15,8 @@
     font-style: normal;
 }
 
+/*@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300&display=swap');*/
+
 * {
     /*font-family: 'Poppins', sans-serif;*/
     font-family: 'Prompt-Light', sans-serif;
@@ -219,16 +221,16 @@ a.article:hover {
 
 /* Floating menu */
 .floating-menu {
-    font-family: sans-serif;
+    font-family: 'Prompt', sans-serif;
     background: #c6abf8;
     opacity: 0.8;
     padding: 5px;
-    width: 100px;
+    /*width: 120px;*/
     z-index: 100;
     position: fixed;
     /*bottom: 0px;*/
     top: 220px;
-    right: 5px;
+    right: 10px;
     border-radius: 5px;
 }
 

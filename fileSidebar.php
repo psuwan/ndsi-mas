@@ -42,9 +42,26 @@
                     <li>
                         <a href="./userWorkReport.php">รายงานเกี่ยวการปฏิบัติงาน</a>
                     </li>
-                    <li>
+                    <li><!--
                         <a href="./userWork3Section.php">รายงาน 3 ด้าน</a>
+                    </li>-->
+
+                    <li>
+                        <a href="#report3SectionSubmenu" data-toggle="collapse" aria-expanded="false"
+                           class="dropdown-toggle">รายงาน 3 ด้าน</a>
+                        <ul class="collapse list-unstyled" id="report3SectionSubmenu">
+                            <li>
+                                <a class="pl-5" href="./userWork3Section.php?repSection=1">ด้านที่ 1</a>
+                            </li>
+                            <li>
+                                <a class="pl-5" href="./userWork3Section.php?repSection=2">ด้านที่ 2</a>
+                            </li>
+                            <li>
+                                <a class="pl-5" href="./userWork3Section.php?repSection=3">ด้านที่ 3</a>
+                            </li>
+                        </ul>
                     </li>
+
                     <li>
                         <a href="./userEvidence.php">ข้อมูลเกี่ยวกับการปฏิบัติงานที่ขอรับการประเมิน</a>
                     </li>

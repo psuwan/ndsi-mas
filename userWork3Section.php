@@ -9,6 +9,7 @@ $timeNow = date("H:i:s");
 
 include_once './lib/apksFunctions.php';
 $dbConn = dbConnect();
+$varget_repSection = filter_input(INPUT_GET, 'repSection');
 
 // Get mil-Number from session
 $milNumber = encrypt_decrypt($_SESSION['userLogin'], 'decrypt');
@@ -48,9 +49,7 @@ function chkFileExists($fileName, $fileFolder, $refNumber)
             }
         } else {
             ?>
-            <!--<div class="col-sm-3">-->
-            &nbsp;<span class="badge badge-pill badge-warning"> ไม่มีไฟล์ </span>
-            <!--</div>-->
+            <span class="badge badge-pill badge-warning"> ไม่มีไฟล์ </span>
             <?php
         }
     }
@@ -94,152 +93,166 @@ function chkFileExists($fileName, $fileFolder, $refNumber)
         <?php
         include_once './fileNavbar.php';
         ?>
-        <div class="row mt-3">
-            <!-- col-md-10 offset-md-1 col-lg-8 offset-lg-2 -->
-            <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2 d-flex justify-content-center">
 
-                <div class="card shadow-lg" style="width: 100%;">
-                    <div class="card-body">
-                        <h6 class="card-subtitle mb-2 text-muted"><?= $milNumber; ?></h6>
-                        <div class="row">
-                            <div class="col-12"><h5 class="card-title font-weight-bold">
-                                    รายงานด้านที่ 1 ด้านวินัย คุณธรรม จริยธรรม และจรรยาบรรณข้าราชการที่ทำหน้าที่สอน
-                            </div>
-                        </div>
-                        <hr>
-                        <!-- #01 Row -->
-                        <div class="row mt-3">
+        <?php
+        if ($varget_repSection === '1') {
+            ?>
+            <div class="row mt-3">
+                <!-- col-md-10 offset-md-1 col-lg-8 offset-lg-2 -->
+                <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2 d-flex justify-content-center">
 
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col-md-2 text-md-right">ไฟล์หลักฐาน :</div>
-                                    <div class="col-md-10" id="chkFileSec1">
-                                        <?= chkFileExists('FileSec1', 'files3Sec', 2); ?>
-                                    </div>
+                    <div class="card shadow-lg" style="width: 100%;">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted"><?= $milNumber; ?></h6>
+
+                            <div class="row">
+                                <div class="col-12"><h5 class="card-title font-weight-bold">
+                                        รายงานด้านที่ 1 ด้านวินัย คุณธรรม จริยธรรม และจรรยาบรรณข้าราชการที่ทำหน้าที่สอน
                                 </div>
+                            </div>
+                            <hr>
+                            <!-- #01 Row -->
+                            <div class="row mt-3">
 
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="col-10 offset-2">
-                                            <label class="btn btn-outline-info btn-sm mt-2"
-                                                   id="id4BtnEvd_FileSec1"
-                                                   style="width:65px;">ไฟล์<input
-                                                        type="file" multiple
-                                                        style="display:none;"
-                                                        name="evdFiles_FileSec1"
-                                                        id="id4EvdFiles_FileSec1"
-                                                        onchange="updFile2Upload('FileSec1', 'files3Sec', 'userWork3section.php');">
-                                            </label><span id="span4Evd_FileSec1"></span>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-md-2 text-md-right">ไฟล์หลักฐาน :</div>
+                                        <div class="col-md-10" id="chkFileSec1">
+                                            <?= chkFileExists($milNumber . 'FileSec1', 'files3Sec', 2); ?>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="col-10 offset-2">
+                                                <label class="btn btn-outline-info btn-sm mt-2"
+                                                       id="id4BtnEvd_<?= $milNumber; ?>FileSec1"
+                                                       style="width:65px;">ไฟล์<input
+                                                            type="file" multiple
+                                                            style="display:none;"
+                                                            name="evdFiles_<?= $milNumber; ?>FileSec1"
+                                                            id="id4EvdFiles_<?= $milNumber; ?>FileSec1"
+                                                            onchange="updFile2Upload('<?= $milNumber; ?>FileSec1', 'files3Sec', 'userWork3section.php');">
+                                                </label><span id="span4Evd_<?= $milNumber; ?>FileSec1"></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                        </div><!-- End of #01 Row -->
+                            </div><!-- End of #01 Row -->
 
-                    </div>
-                </div><!-- End of card #1 -->
-
-            </div>
-        </div><!-- End of row -->
-
-        <div class="row mt-3">
-            <!-- col-md-10 offset-md-1 col-lg-8 offset-lg-2 -->
-            <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2 d-flex justify-content-center">
-
-                <div class="card shadow-lg" style="width: 100%;">
-                    <div class="card-body">
-                        <h6 class="card-subtitle mb-2 text-muted"><?= $milNumber; ?></h6>
-                        <div class="row">
-                            <div class="col-12"><h5 class="card-title font-weight-bold">
-                                    รายงานด้านที่ 2 ความรู้ ความสามารถ
-                            </div>
                         </div>
-                        <hr>
-                        <!-- #01 Row -->
-                        <div class="row mt-3">
+                    </div><!-- End of card #1 -->
 
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col-md-2 text-md-right">ไฟล์หลักฐาน :</div>
-                                    <div class="col-md-10" id="chkFileSec1">
-                                        <?= chkFileExists('FileSec2', 'files3Sec', 2); ?>
-                                    </div>
+                </div>
+            </div><!-- End of row -->
+            <?php
+        } elseif ($varget_repSection === '2') {
+            ?>
+
+            <div class="row mt-3">
+                <!-- col-md-10 offset-md-1 col-lg-8 offset-lg-2 -->
+                <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2 d-flex justify-content-center">
+
+                    <div class="card shadow-lg" style="width: 100%;">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted"><?= $milNumber; ?></h6>
+                            <div class="row">
+                                <div class="col-12"><h5 class="card-title font-weight-bold">
+                                        รายงานด้านที่ 2 ความรู้ ความสามารถ
                                 </div>
+                            </div>
+                            <hr>
+                            <!-- #01 Row -->
+                            <div class="row mt-3">
 
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="col-10 offset-2">
-                                            <label class="btn btn-outline-info btn-sm mt-2"
-                                                   id="id4BtnEvd_FileSec2"
-                                                   style="width:65px;">ไฟล์<input
-                                                        type="file" multiple
-                                                        style="display:none;"
-                                                        name="evdFiles_FileSec2"
-                                                        id="id4EvdFiles_FileSec2"
-                                                        onchange="updFile2Upload('FileSec2', 'files3Sec', 'userWork3section.php');">
-                                            </label><span id="span4Evd_FileSec2"></span>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-md-2 text-md-right">ไฟล์หลักฐาน :</div>
+                                        <div class="col-md-10" id="chkFileSec1">
+                                            <?= chkFileExists($milNumber . 'FileSec2', 'files3Sec', 2); ?>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="col-10 offset-2">
+                                                <label class="btn btn-outline-info btn-sm mt-2"
+                                                       id="id4BtnEvd_<?= $milNumber; ?>FileSec2"
+                                                       style="width:65px;">ไฟล์<input
+                                                            type="file" multiple
+                                                            style="display:none;"
+                                                            name="evdFiles_<?= $milNumber; ?>FileSec2"
+                                                            id="id4EvdFiles_<?= $milNumber; ?>FileSec2"
+                                                            onchange="updFile2Upload('<?= $milNumber; ?>FileSec2', 'files3Sec', 'userWork3section.php');">
+                                                </label><span id="span4Evd_<?= $milNumber; ?>FileSec2"></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                        </div><!-- End of #01 Row -->
+                            </div><!-- End of #01 Row -->
 
-                    </div>
-                </div><!-- End of card #1 -->
-
-            </div>
-        </div><!-- End of row -->
-
-        <div class="row mt-3">
-            <!-- col-md-10 offset-md-1 col-lg-8 offset-lg-2 -->
-            <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2 d-flex justify-content-center">
-
-                <div class="card shadow-lg" style="width: 100%;">
-                    <div class="card-body">
-                        <h6 class="card-subtitle mb-2 text-muted"><?= $milNumber; ?></h6>
-                        <div class="row">
-                            <div class="col-12"><h5 class="card-title font-weight-bold">
-                                    รายงานด้านที่ 3 ผลการปฏิบัติงาน
-                            </div>
                         </div>
-                        <hr>
-                        <!-- #01 Row -->
-                        <div class="row mt-3">
+                    </div><!-- End of card #1 -->
 
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col-md-2 text-md-right">ไฟล์หลักฐาน :</div>
-                                    <div class="col-md-10" id="chkFileSec3">
-                                        <?= chkFileExists('FileSec3', 'files3Sec', 2); ?>
-                                    </div>
+                </div>
+            </div><!-- End of row -->
+            <?php
+        } elseif ($varget_repSection === '3') {
+            ?>
+
+            <div class="row mt-3">
+                <!-- col-md-10 offset-md-1 col-lg-8 offset-lg-2 -->
+                <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2 d-flex justify-content-center">
+
+                    <div class="card shadow-lg" style="width: 100%;">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted"><?= $milNumber; ?></h6>
+                            <div class="row">
+                                <div class="col-12"><h5 class="card-title font-weight-bold">
+                                        รายงานด้านที่ 3 ผลการปฏิบัติงาน
                                 </div>
+                            </div>
+                            <hr>
+                            <!-- #01 Row -->
+                            <div class="row mt-3">
 
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="col-10 offset-2">
-                                            <label class="btn btn-outline-info btn-sm mt-2"
-                                                   id="id4BtnEvd_FileSec3"
-                                                   style="width:65px;">ไฟล์<input
-                                                        type="file" multiple
-                                                        style="display:none;"
-                                                        name="evdFiles_FileSec3"
-                                                        id="id4EvdFiles_FileSec3"
-                                                        onchange="updFile2Upload('FileSec3', 'files3Sec', 'userWork3section.php');">
-                                            </label><span id="span4Evd_FileSec3"></span>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-md-2 text-md-right">ไฟล์หลักฐาน :</div>
+                                        <div class="col-md-10" id="chkFileSec3">
+                                            <?= chkFileExists($milNumber . 'FileSec3', 'files3Sec', 2); ?>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="col-10 offset-2">
+                                                <label class="btn btn-outline-info btn-sm mt-2"
+                                                       id="id4BtnEvd_<?= $milNumber; ?>FileSec3"
+                                                       style="width:65px;">ไฟล์<input
+                                                            type="file" multiple
+                                                            style="display:none;"
+                                                            name="evdFiles_<?= $milNumber; ?>FileSec3"
+                                                            id="id4EvdFiles_<?= $milNumber; ?>FileSec3"
+                                                            onchange="updFile2Upload('<?= $milNumber; ?>FileSec3', 'files3Sec', 'userWork3section.php');">
+                                                </label><span id="span4Evd_<?= $milNumber; ?>FileSec3"></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                        </div><!-- End of #01 Row -->
+                            </div><!-- End of #01 Row -->
 
-                    </div>
-                </div><!-- End of card #1 -->
+                        </div>
+                    </div><!-- End of card #1 -->
 
-            </div>
-        </div><!-- End of row -->
+                </div>
+            </div><!-- End of row -->
+            <?php
+        }
+        ?>
 
     </div>
 </div>

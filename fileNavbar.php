@@ -1,4 +1,5 @@
-<nav class="navbar navbar-expand-md bg-light navbar-light pr-md-5">
+<nav class="navbar navbar-expand-md bg-light navbar-light pr-md-5 sticky-top">
+
     <button type="button" id="sidebarCollapse" class="btn btn-outline-success">
         <i class="fas fa-align-left"></i>
     </button>
